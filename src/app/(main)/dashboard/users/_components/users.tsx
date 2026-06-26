@@ -3,6 +3,8 @@
 
 import * as React from "react";
 
+import { useRouter } from "next/navigation";
+
 import {
   type ColumnFiltersState,
   getCoreRowModel,
@@ -14,8 +16,19 @@ import {
   useReactTable,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { Cog, Download, Grid, Plus, Rows3, Search, SlidersHorizontal } from "lucide-react";
+import { Download, Grid, Plus, Rows3, Search } from "lucide-react";
+import { toast } from "sonner";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -23,11 +36,15 @@ import { Kbd } from "@/components/ui/kbd";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { filters, type UserRow } from "./data";
-import { usersColumns } from "./users-columns";
+import { deleteUser } from "./actions";
+import { filters, type UserRow, type UsersLookups } from "./data";
+import { UserPanel } from "./user-panel";
+import { getUsersColumns } from "./users-columns";
 import { UsersTable } from "./users-table";
 
-export function Users({ users }: { users: UserRow[] }) {
+export function Users({ users, lookups }: { users: UserRow[]; lookups: UsersLookups }) {
+  const router = useRouter();
+  const [isDeletePending, startDeleteTransition] = React.useTransition();
   const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState<SortingState>([{ id: "joinedDate", desc: true }]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -39,10 +56,30 @@ export function Users({ users }: { users: UserRow[] }) {
     pageIndex: 0,
     pageSize: 10,
   });
+  const [selectedUser, setSelectedUser] = React.useState<UserRow | null>(null);
+  const [panelOpen, setPanelOpen] = React.useState(false);
+  const [deleteTarget, setDeleteTarget] = React.useState<UserRow | null>(null);
+
+  const filterOptions = React.useMemo(() => {
+    const mergeOptions = (base: string[], values: string[]) => ["All", ...Array.from(new Set([...base.filter((item) => item !== "All"), ...values.filter(Boolean)]))];
+
+    return {
+      role: mergeOptions(filters.role, users.map((user) => user.role)),
+      team: mergeOptions(filters.team, users.map((user) => user.team)),
+      status: mergeOptions(filters.status, users.map((user) => user.status)),
+      workspace: mergeOptions(filters.workspace, users.flatMap((user) => user.workspace)),
+    };
+  }, [users]);
+
+  const columns = React.useMemo(
+    () =>
+      getUsersColumns({ onOpenUser: (user) => { setSelectedUser(user); setPanelOpen(true); }, onDeleteUser: setDeleteTarget }),
+    [],
+  );
 
   const table = useReactTable({
     data: users,
-    columns: usersColumns,
+    columns,
     state: {
       rowSelection,
       sorting,
@@ -50,7 +87,7 @@ export function Users({ users }: { users: UserRow[] }) {
       columnVisibility,
       pagination,
     },
-    getRowId: (row) => row.email,
+    getRowId: (row) => row.id,
     autoResetPageIndex: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -65,10 +102,10 @@ export function Users({ users }: { users: UserRow[] }) {
   });
 
   const searchQuery = (table.getColumn("search")?.getFilterValue() as string) ?? "";
-  const roleFilter = (table.getColumn("role")?.getFilterValue() as string) ?? filters.role[0];
-  const teamFilter = (table.getColumn("team")?.getFilterValue() as string) ?? filters.team[0];
-  const statusFilter = (table.getColumn("status")?.getFilterValue() as string) ?? filters.status[0];
-  const workspaceFilter = (table.getColumn("workspace")?.getFilterValue() as string) ?? filters.workspace[0];
+  const roleFilter = (table.getColumn("role")?.getFilterValue() as string) ?? filterOptions.role[0];
+  const teamFilter = (table.getColumn("team")?.getFilterValue() as string) ?? filterOptions.team[0];
+  const statusFilter = (table.getColumn("status")?.getFilterValue() as string) ?? filterOptions.status[0];
+  const workspaceFilter = (table.getColumn("workspace")?.getFilterValue() as string) ?? filterOptions.workspace[0];
   const selectedCount = table.getFilteredSelectedRowModel().rows.length;
 
   function setColumnSelectFilter(columnId: string, value: string) {
@@ -76,12 +113,31 @@ export function Users({ users }: { users: UserRow[] }) {
     table.setPageIndex(0);
   }
 
+  function handleDeleteUser() {
+    if (!deleteTarget) return;
+
+    const formData = new FormData();
+    formData.set("userId", deleteTarget.id);
+    formData.set("staffId", deleteTarget.staffId ?? "");
+
+    startDeleteTransition(async () => {
+      try {
+        await deleteUser(formData);
+        toast.success("Da xoa nhan su.");
+        setDeleteTarget(null);
+        router.refresh();
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Khong the xoa nhan su.");
+      }
+    });
+  }
+
   return (
     <Card>
       <CardHeader className="border-b has-data-[slot=card-action]:grid-cols-1 md:has-data-[slot=card-action]:grid-cols-[1fr_auto]">
-        <CardTitle className="text-xl leading-none">Users</CardTitle>
-        <CardDescription className="max-w-sm leading-snug">
-          Manage your organization members and their access.
+        <CardTitle className="text-xl leading-none">Nhan su</CardTitle>
+        <CardDescription className="max-w-[400px] leading-snug">
+          Quan ly cac thanh vien trong to chuc va quyen truy cap cua ho
         </CardDescription>
         <CardAction className="col-start-1 row-start-auto flex w-full flex-wrap justify-start gap-2 justify-self-stretch md:col-start-2 md:row-span-2 md:row-start-1 md:w-auto md:flex-nowrap md:justify-end md:justify-self-end">
           <InputGroup className="h-7 w-full md:w-64">
@@ -90,7 +146,7 @@ export function Users({ users }: { users: UserRow[] }) {
             </InputGroupAddon>
             <InputGroupInput
               className="h-7"
-              placeholder="Search users..."
+              placeholder="Tim nhan su..."
               value={searchQuery}
               onChange={(event) => {
                 table.getColumn("search")?.setFilterValue(event.target.value || undefined);
@@ -98,21 +154,13 @@ export function Users({ users }: { users: UserRow[] }) {
               }}
             />
             <InputGroupAddon align="inline-end">
-              <Kbd className="h-4 text-[10px]">⌘K</Kbd>
+              <Kbd className="h-4 text-[10px]">search</Kbd>
             </InputGroupAddon>
           </InputGroup>
           <Button variant="outline" size="sm">
-            <SlidersHorizontal /> Hide
+            <Download /> Xuat
           </Button>
-          <Button variant="outline" size="sm">
-            <Cog /> Customize
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download /> Export
-          </Button>
-          <Button size="sm">
-            <Plus /> Add User
-          </Button>
+          <Button size="sm" onClick={() => { setSelectedUser(null); setPanelOpen(true); }}><Plus /> Them nhan su</Button>
         </CardAction>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 px-0">
@@ -120,12 +168,12 @@ export function Users({ users }: { users: UserRow[] }) {
           <div className="flex flex-wrap items-center gap-3">
             <Select value={roleFilter} onValueChange={(value) => setColumnSelectFilter("role", value)}>
               <SelectTrigger size="sm">
-                <span className="text-muted-foreground">Role:</span>
+                <span className="text-muted-foreground">Vai tro:</span>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper" align="start">
                 <SelectGroup>
-                  {filters.role.map((option) => (
+                  {filterOptions.role.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
@@ -136,12 +184,12 @@ export function Users({ users }: { users: UserRow[] }) {
 
             <Select value={teamFilter} onValueChange={(value) => setColumnSelectFilter("team", value)}>
               <SelectTrigger size="sm">
-                <span className="text-muted-foreground">Team:</span>
+                <span className="text-muted-foreground">Nhom:</span>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper" align="start">
                 <SelectGroup>
-                  {filters.team.map((option) => (
+                  {filterOptions.team.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
@@ -152,12 +200,12 @@ export function Users({ users }: { users: UserRow[] }) {
 
             <Select value={statusFilter} onValueChange={(value) => setColumnSelectFilter("status", value)}>
               <SelectTrigger size="sm">
-                <span className="text-muted-foreground">Status:</span>
+                <span className="text-muted-foreground">Trang thai:</span>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper" align="start">
                 <SelectGroup>
-                  {filters.status.map((option) => (
+                  {filterOptions.status.map((option) => (
                     <SelectItem key={option} value={option}>
                       {option}
                     </SelectItem>
@@ -174,7 +222,7 @@ export function Users({ users }: { users: UserRow[] }) {
             </SelectTrigger>
             <SelectContent position="popper" align="end">
               <SelectGroup>
-                {filters.workspace.map((option) => (
+                {filterOptions.workspace.map((option) => (
                   <SelectItem key={option} value={option}>
                     {option}
                   </SelectItem>
@@ -185,7 +233,7 @@ export function Users({ users }: { users: UserRow[] }) {
         </div>
 
         <div className="flex items-center justify-between gap-3 px-4">
-          <div className="text-muted-foreground text-sm tabular-nums">{selectedCount} selected</div>
+          <div className="text-muted-foreground text-sm tabular-nums">{selectedCount} da chon</div>
 
           <Tabs defaultValue="list">
             <TabsList>
@@ -200,7 +248,24 @@ export function Users({ users }: { users: UserRow[] }) {
         </div>
 
         <UsersTable table={table} />
+        <UserPanel user={selectedUser} lookups={lookups} open={panelOpen} onOpenChange={setPanelOpen} />
       </CardContent>
+      <AlertDialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xoa nhan su?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tai khoan "{deleteTarget?.username}" se bi xoa. Ho so nhan su se bi xoa neu chua co rang buoc du lieu, neu khong se chuyen sang inactive.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeletePending}>Huy</AlertDialogCancel>
+            <AlertDialogAction type="button" variant="destructive" disabled={isDeletePending} onClick={handleDeleteUser}>
+              Xoa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

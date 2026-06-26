@@ -1,307 +1,175 @@
-import type { BoardState, Column, TaskOwnerProfile, TaskTeam } from "./types";
+import type { RowDataPacket } from "mysql2";
 
-export const columns = [
-  { id: "ideas", title: "Ideas" },
-  { id: "planned", title: "Planned" },
-  { id: "building", title: "Building" },
-  { id: "qa", title: "QA" },
-  { id: "shipped", title: "Shipped" },
-] as const satisfies readonly Column[];
+import { getDbPool } from "@/lib/db";
 
-export const columnIds = columns.map((column) => column.id);
+import { columnIds } from "./columns";
+import type { BoardState, CollectionStatus, ColumnId, CustomsStatus, InvoiceStatus, Task, TaskPriority } from "./types";
 
-export const tagTones: Record<TaskTeam, string> = {
-  Backend: "bg-blue-500/10 text-blue-700 dark:text-blue-300",
-  Data: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-  Design: "bg-fuchsia-500/10 text-fuchsia-700 dark:text-fuchsia-300",
-  Docs: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300",
-  "Finance Ops": "bg-teal-500/10 text-teal-700 dark:text-teal-300",
-  Platform: "bg-cyan-500/10 text-cyan-700 dark:text-cyan-300",
-  Product: "bg-orange-500/10 text-orange-700 dark:text-orange-300",
-  QA: "bg-red-500/10 text-red-700 dark:text-red-300",
-  Security: "bg-violet-500/10 text-violet-700 dark:text-violet-300",
-};
+export interface KanbanDateRange {
+  from: string;
+  to: string;
+}
 
-export const taskOwners = {
-  arham: {
-    name: "Arham Khan",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-zinc-100 [&_[data-slot=avatar-fallback]]:text-zinc-700 after:border-zinc-200 dark:[&_[data-slot=avatar-fallback]]:bg-zinc-500/15 dark:[&_[data-slot=avatar-fallback]]:text-zinc-300 dark:after:border-zinc-500/20",
-  },
-  junaid: {
-    name: "Ethan Brooks",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-lime-100 [&_[data-slot=avatar-fallback]]:text-lime-700 after:border-lime-200 dark:[&_[data-slot=avatar-fallback]]:bg-lime-500/15 dark:[&_[data-slot=avatar-fallback]]:text-lime-300 dark:after:border-lime-500/20",
-  },
-  maya: {
-    name: "Hannah Reed",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-indigo-100 [&_[data-slot=avatar-fallback]]:text-indigo-700 after:border-indigo-200 dark:[&_[data-slot=avatar-fallback]]:bg-indigo-500/15 dark:[&_[data-slot=avatar-fallback]]:text-indigo-300 dark:after:border-indigo-500/20",
-  },
-  meera: {
-    name: "Rohan Iyer",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-fuchsia-100 [&_[data-slot=avatar-fallback]]:text-fuchsia-700 after:border-fuchsia-200 dark:[&_[data-slot=avatar-fallback]]:bg-fuchsia-500/15 dark:[&_[data-slot=avatar-fallback]]:text-fuchsia-300 dark:after:border-fuchsia-500/20",
-  },
-  nisha: {
-    name: "Nora Bennett",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-violet-100 [&_[data-slot=avatar-fallback]]:text-violet-700 after:border-violet-200 dark:[&_[data-slot=avatar-fallback]]:bg-violet-500/15 dark:[&_[data-slot=avatar-fallback]]:text-violet-300 dark:after:border-violet-500/20",
-  },
-  rahul: {
-    name: "Vikram Menon",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-pink-100 [&_[data-slot=avatar-fallback]]:text-pink-700 after:border-pink-200 dark:[&_[data-slot=avatar-fallback]]:bg-pink-500/15 dark:[&_[data-slot=avatar-fallback]]:text-pink-300 dark:after:border-pink-500/20",
-  },
-  sara: {
-    name: "Clara Hughes",
-    tone: "[&_[data-slot=avatar-fallback]]:bg-sky-100 [&_[data-slot=avatar-fallback]]:text-sky-700 after:border-sky-200 dark:[&_[data-slot=avatar-fallback]]:bg-sky-500/15 dark:[&_[data-slot=avatar-fallback]]:text-sky-300 dark:after:border-sky-500/20",
-  },
-} satisfies Record<string, TaskOwnerProfile>;
+interface OrderKanbanRow extends RowDataPacket {
+  order_id: string;
+  order_code: string;
+  customer_code: string | null;
+  customer_name: string | null;
+  operation_status: ColumnId;
+  customs_status: CustomsStatus;
+  collection_status: CollectionStatus;
+  invoice_status: InvoiceStatus;
+  order_date: Date | string | null;
+  created_at: Date | string | null;
+  delivery_date: Date | string | null;
+  payment_due_date: Date | string | null;
+  delivery_address: string | null;
+  sender_name: string | null;
+  sender_phone: string | null;
+  sender_address: string | null;
+  receiver_name: string | null;
+  receiver_phone: string | null;
+  receiver_address: string | null;
+  route_name: string | null;
+  container_code: string | null;
+  tracking_code: string | null;
+  cargo_name: string | null;
+  total_packages: number | string | null;
+  total_weight_kg: number | string | null;
+  total_volume_m3: number | string | null;
+  total_charge_vnd: number | string | null;
+  paid_amount_vnd: number | string | null;
+  remaining_amount_vnd: number | string | null;
+  note: string | null;
+}
 
-export const initialBoard: BoardState = {
-  ideas: [
-    {
-      id: "tender-workflow-map",
-      title: "Tender workflow map",
-      description: "Model Tender, Award/L1, Work Order, allocation, salary, and documents.",
-      priority: "High",
-      dueDate: "Jun 14",
-      progress: 10,
-      owner: taskOwners.arham,
-      team: "Product",
-      insights: [
-        { label: "Comments", count: 7 },
-        { label: "Documents", count: 3 },
-      ],
-    },
-    {
-      id: "license-strategy-research",
-      title: "License strategy research",
-      description: "Compare private MVP, open core, GPL, AGPL, and commercial modules.",
-      priority: "Medium",
-      dueDate: "Jun 16",
-      progress: 20,
-      owner: taskOwners.rahul,
-      team: "Finance Ops",
-      insights: [
-        { label: "Attachments", count: 2 },
-        { label: "Comments", count: 5 },
-      ],
-    },
-    {
-      id: "backup-restore-plan",
-      title: "Backup and restore plan",
-      description: "Define local database backup, restore, and exported document recovery.",
-      priority: "Medium",
-      dueDate: "Jun 18",
-      progress: 15,
-      owner: taskOwners.maya,
-      team: "Platform",
-      insights: [
-        { label: "Attachments", count: 1 },
-        { label: "Comments", count: 4 },
-      ],
-    },
-    {
-      id: "work-order-allocation-model",
-      title: "Work order allocation model",
-      description: "Sketch how awarded work orders connect to employee allocations and salary months.",
-      priority: "Medium",
-      dueDate: "Jun 19",
-      progress: 5,
-      owner: taskOwners.meera,
-      team: "Product",
-      insights: [
-        { label: "Comments", count: 3 },
-        { label: "Documents", count: 1 },
-      ],
-    },
-    {
-      id: "future-sync-notes",
-      title: "Future sync notes",
-      description: "Capture local-first sync assumptions before deciding on cloud PostgreSQL and file storage.",
-      priority: "Low",
-      dueDate: "Jun 21",
-      progress: 0,
-      owner: taskOwners.arham,
-      team: "Platform",
-      insights: [{ label: "Comments", count: 2 }],
-    },
-  ],
-  planned: [
-    {
-      id: "electron-app-shell",
-      title: "Electron app shell",
-      description: "Create local-first desktop shell with React, Tailwind, and shadcn/ui.",
-      priority: "High",
-      dueDate: "Jun 20",
-      progress: 25,
-      owner: taskOwners.arham,
-      team: "Platform",
-      insights: [
-        { label: "Attachments", count: 4 },
-        { label: "Comments", count: 9 },
-        { label: "Documents", count: 2 },
-      ],
-    },
-    {
-      id: "secure-preload-api",
-      title: "Secure preload API",
-      description: "Expose renderer-safe methods for imports, records, PDFs, and backups.",
-      priority: "High",
-      dueDate: "Jun 22",
-      progress: 20,
-      owner: taskOwners.nisha,
-      team: "Backend",
-      insights: [
-        { label: "Attachments", count: 2 },
-        { label: "Comments", count: 6 },
-        { label: "Documents", count: 1 },
-      ],
-    },
-    {
-      id: "party-employee-records",
-      title: "Party and employee records",
-      description: "Create local records for clients, contractors, employees, and identifiers.",
-      priority: "Medium",
-      dueDate: "Jun 24",
-      progress: 15,
-      owner: taskOwners.meera,
-      team: "Product",
-      insights: [
-        { label: "Comments", count: 5 },
-        { label: "Documents", count: 2 },
-      ],
-    },
-    {
-      id: "generated-documents-index",
-      title: "Generated documents index",
-      description: "Plan filters for generated PDFs by party, salary month, employee, and import batch.",
-      priority: "Medium",
-      dueDate: "Jun 25",
-      progress: 10,
-      owner: taskOwners.maya,
-      team: "Docs",
-      insights: [
-        { label: "Attachments", count: 2 },
-        { label: "Comments", count: 4 },
-      ],
-    },
-  ],
-  building: [
-    {
-      id: "sqlite-drizzle-schema",
-      title: "SQLite and Drizzle schema",
-      description: "Model parties, employees, tenders, work orders, salary imports, and documents.",
-      priority: "High",
-      dueDate: "Jun 26",
-      progress: 65,
-      owner: taskOwners.arham,
-      team: "Data",
-      insights: [
-        { label: "Attachments", count: 5 },
-        { label: "Comments", count: 11 },
-        { label: "Documents", count: 4 },
-      ],
-    },
-    {
-      id: "salary-excel-import",
-      title: "Salary Excel import",
-      description: "Read salary sheets with SheetJS and persist import batches locally.",
-      priority: "High",
-      dueDate: "Jun 28",
-      progress: 45,
-      owner: taskOwners.junaid,
-      team: "Data",
-      insights: [
-        { label: "Attachments", count: 3 },
-        { label: "Comments", count: 8 },
-        { label: "Documents", count: 2 },
-      ],
-    },
-    {
-      id: "column-mapping-builder",
-      title: "Column mapping builder",
-      description: "Map Excel columns to salary fields with reusable templates per party.",
-      priority: "Medium",
-      dueDate: "Jul 1",
-      progress: 30,
-      owner: taskOwners.sara,
-      team: "Design",
-      insights: [
-        { label: "Comments", count: 6 },
-        { label: "Documents", count: 2 },
-      ],
-    },
-  ],
-  qa: [
-    {
-      id: "salary-row-validation",
-      title: "Salary row validation",
-      description: "Flag missing employee IDs, invalid amounts, duplicate rows, and unmapped fields.",
-      priority: "High",
-      dueDate: "Jul 4",
-      progress: 75,
-      owner: taskOwners.nisha,
-      team: "QA",
-      insights: [
-        { label: "Attachments", count: 4 },
-        { label: "Comments", count: 10 },
-      ],
-    },
-    {
-      id: "payslip-preview",
-      title: "Payslip preview",
-      description: "Preview generated payslips before bulk PDF export and document history.",
-      priority: "Medium",
-      dueDate: "Jul 6",
-      progress: 60,
-      owner: taskOwners.junaid,
-      team: "Finance Ops",
-      insights: [
-        { label: "Attachments", count: 3 },
-        { label: "Comments", count: 7 },
-        { label: "Documents", count: 3 },
-      ],
-    },
-  ],
-  shipped: [
-    {
-      id: "architecture-rule",
-      title: "Architecture rule locked",
-      description: "Renderer stays UI-only; preload, IPC, services, and database stay separated.",
-      priority: "High",
-      dueDate: "Jun 8",
-      progress: 100,
-      owner: taskOwners.arham,
-      team: "Backend",
-      insights: [
-        { label: "Comments", count: 6 },
-        { label: "Documents", count: 3 },
-      ],
-    },
-    {
-      id: "private-mvp-scope",
-      title: "Private MVP scope",
-      description: "Start private source first, then revisit open-core after workflow validation.",
-      priority: "Medium",
-      dueDate: "Jun 10",
-      progress: 100,
-      owner: taskOwners.rahul,
-      team: "Finance Ops",
-      insights: [
-        { label: "Attachments", count: 2 },
-        { label: "Comments", count: 4 },
-      ],
-    },
-    {
-      id: "mvp-module-priorities",
-      title: "MVP module priorities",
-      description: "Payslip generation is first, but data model supports wider tender operations.",
-      priority: "Medium",
-      dueDate: "Jun 12",
-      progress: 100,
-      owner: taskOwners.meera,
-      team: "Finance Ops",
-      insights: [
-        { label: "Comments", count: 5 },
-        { label: "Documents", count: 2 },
-      ],
-    },
-  ],
-};
+function toNumber(value: number | string | null | undefined) {
+  if (value === null || value === undefined || value === "") return 0;
+  return Number(value);
+}
+
+function padDatePart(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function toSqlDateString(value: Date | string | null) {
+  if (!value) return null;
+
+  if (typeof value === "string") {
+    const match = value.match(/^\d{4}-\d{2}-\d{2}/);
+    return match ? match[0] : null;
+  }
+
+  if (Number.isNaN(value.getTime())) return null;
+
+  return `${value.getFullYear()}-${padDatePart(value.getMonth() + 1)}-${padDatePart(value.getDate())}`;
+}
+
+function formatDate(value: Date | string | null) {
+  const dateString = toSqlDateString(value);
+  if (!dateString) return "Chua co lich";
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+function getPriority(row: OrderKanbanRow): TaskPriority {
+  if (row.operation_status === "problem" || toNumber(row.remaining_amount_vnd) > 0) return "High";
+  if (row.operation_status === "in_transit" || row.operation_status === "customs_processing") return "Medium";
+  return "Low";
+}
+
+function createEmptyBoard(): BoardState {
+  return columnIds.reduce((board, columnId) => {
+    board[columnId] = [];
+    return board;
+  }, {} as BoardState);
+}
+
+export async function getOrdersKanbanBoard(dateRange: KanbanDateRange): Promise<BoardState> {
+  const pool = getDbPool();
+  const [rows] = await pool.query<OrderKanbanRow[]>(
+    `
+      select
+        o.order_id,
+        o.order_code,
+        c.customer_code,
+        c.customer_name,
+        o.operation_status,
+        o.customs_status,
+        o.collection_status,
+        o.invoice_status,
+        o.order_date,
+        o.created_at,
+        o.delivery_date,
+        o.payment_due_date,
+        o.delivery_address,
+        o.sender_name,
+        o.sender_phone,
+        o.sender_address,
+        o.receiver_name,
+        o.receiver_phone,
+        o.receiver_address,
+        o.route_name,
+        o.container_code,
+        o.tracking_code,
+        o.cargo_name,
+        o.total_packages,
+        o.total_weight_kg,
+        o.total_volume_m3,
+        o.total_charge_vnd,
+        o.paid_amount_vnd,
+        o.remaining_amount_vnd,
+        o.note
+      from orders o
+      left join customers c on c.customer_id = o.customer_id
+      where o.created_at >= ? and o.created_at < ?
+      order by coalesce(o.delivery_date, o.order_date, date(o.created_at)) desc, o.created_at desc
+      limit 500
+    `,
+    [dateRange.from, dateRange.to],
+  );
+
+  const board = createEmptyBoard();
+
+  for (const row of rows) {
+    const status = columnIds.includes(row.operation_status) ? row.operation_status : "new";
+    const task: Task = {
+      id: row.order_id,
+      title: row.order_code,
+      description: row.note ?? row.cargo_name ?? "Chua co mo ta hang hoa",
+      priority: getPriority(row),
+      dueDate: formatDate(row.delivery_date ?? row.payment_due_date),
+      customerName: row.customer_name ?? "Chua co khach hang",
+      customerCode: row.customer_code,
+      senderName: row.sender_name,
+      senderPhone: row.sender_phone,
+      senderAddress: row.sender_address,
+      receiverName: row.receiver_name,
+      receiverPhone: row.receiver_phone,
+      receiverAddress: row.receiver_address,
+      deliveryAddress: row.delivery_address,
+      orderDate: toSqlDateString(row.order_date ?? row.created_at),
+      deliveryDate: toSqlDateString(row.delivery_date),
+      paymentDueDate: toSqlDateString(row.payment_due_date),
+      routeName: row.route_name,
+      containerCode: row.container_code,
+      trackingCode: row.tracking_code,
+      cargoName: row.cargo_name,
+      operationStatus: status,
+      customsStatus: row.customs_status ?? "not_started",
+      collectionStatus: row.collection_status ?? "not_collected",
+      invoiceStatus: row.invoice_status ?? "not_issued",
+      totalChargeVnd: toNumber(row.total_charge_vnd),
+      paidAmountVnd: toNumber(row.paid_amount_vnd),
+      remainingAmountVnd: toNumber(row.remaining_amount_vnd),
+      totalPackages: toNumber(row.total_packages),
+      totalWeightKg: toNumber(row.total_weight_kg),
+      totalVolumeM3: toNumber(row.total_volume_m3),
+      note: row.note,
+    };
+
+    board[status].push(task);
+  }
+
+  return board;
+}

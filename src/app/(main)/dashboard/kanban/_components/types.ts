@@ -1,34 +1,24 @@
-export type ColumnId = "ideas" | "planned" | "building" | "qa" | "shipped";
+export type ColumnId =
+  | "new"
+  | "received"
+  | "in_transit"
+  | "arrived_warehouse"
+  | "customs_processing"
+  | "customs_done"
+  | "delivered"
+  | "cancelled"
+  | "problem";
 
 export type Column = {
   id: ColumnId;
   title: string;
 };
 
-export type TaskTeam =
-  | "Backend"
-  | "Data"
-  | "Design"
-  | "Docs"
-  | "Finance Ops"
-  | "Platform"
-  | "Product"
-  | "QA"
-  | "Security";
-
 export type TaskPriority = "High" | "Medium" | "Low";
 
-export type TaskInsightLabel = "Attachments" | "Comments" | "Documents";
-
-export type TaskInsight = {
-  label: TaskInsightLabel;
-  count: number;
-};
-
-export type TaskOwnerProfile = {
-  name: string;
-  tone: string;
-};
+export type CustomsStatus = "not_started" | "processing" | "cleared" | "hold" | "cancelled";
+export type CollectionStatus = "not_collected" | "partial" | "collected" | "overdue" | "bad_debt";
+export type InvoiceStatus = "not_issued" | "draft" | "issued" | "sent" | "cancelled";
 
 export type Task = {
   id: string;
@@ -36,10 +26,33 @@ export type Task = {
   description: string;
   priority: TaskPriority;
   dueDate: string;
-  progress: number;
-  owner: TaskOwnerProfile;
-  team: TaskTeam;
-  insights: TaskInsight[];
+  customerName: string;
+  customerCode: string | null;
+  senderName: string | null;
+  senderPhone: string | null;
+  senderAddress: string | null;
+  receiverName: string | null;
+  receiverPhone: string | null;
+  receiverAddress: string | null;
+  deliveryAddress: string | null;
+  orderDate: string | null;
+  deliveryDate: string | null;
+  paymentDueDate: string | null;
+  routeName: string | null;
+  containerCode: string | null;
+  trackingCode: string | null;
+  cargoName: string | null;
+  operationStatus: ColumnId;
+  customsStatus: CustomsStatus;
+  collectionStatus: CollectionStatus;
+  invoiceStatus: InvoiceStatus;
+  totalChargeVnd: number;
+  paidAmountVnd: number;
+  remainingAmountVnd: number;
+  totalPackages: number;
+  totalWeightKg: number;
+  totalVolumeM3: number;
+  note: string | null;
 };
 
 export type BoardState = Record<ColumnId, Task[]>;

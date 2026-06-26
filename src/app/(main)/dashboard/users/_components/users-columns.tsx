@@ -115,13 +115,20 @@ function WorkspaceCell({ workspaces }: { workspaces: string[] }) {
   );
 }
 
-export const usersColumns: ColumnDef<UserRow>[] = [
+export function getUsersColumns({
+  onOpenUser,
+  onDeleteUser,
+}: {
+  onOpenUser: (user: UserRow) => void;
+  onDeleteUser: (user: UserRow) => void;
+}): ColumnDef<UserRow>[] {
+  return [
   {
     id: "select",
     header: ({ table }) => (
       <div className="flex items-center justify-center">
         <Checkbox
-          aria-label="Select all users"
+          aria-label="Chon tat ca nhan su"
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         />
@@ -147,12 +154,19 @@ export const usersColumns: ColumnDef<UserRow>[] = [
   },
   {
     accessorKey: "name",
-    header: "User",
+    header: "Nguoi dung",
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
         <AvatarCell name={row.original.name} lastActive={row.original.lastActive} />
         <div className="min-w-0">
-          <div className="truncate font-medium text-foreground text-sm">{row.original.name}</div>
+          <Button
+            type="button"
+            variant="link"
+            className="h-auto min-w-0 justify-start p-0 text-left font-medium text-foreground text-sm"
+            onClick={() => onOpenUser(row.original)}
+          >
+            <span className="truncate">{row.original.name}</span>
+          </Button>
           <div className="truncate text-muted-foreground text-sm">{row.original.email}</div>
         </div>
       </div>
@@ -160,13 +174,13 @@ export const usersColumns: ColumnDef<UserRow>[] = [
   },
   {
     accessorKey: "role",
-    header: "Role / Team",
+    header: "Vai tro",
     filterFn: "equalsString",
     cell: ({ row }) => <RoleCell role={row.original.role} team={row.original.team} />,
   },
   {
     accessorKey: "team",
-    header: "Team",
+    header: "Nhom",
     filterFn: "equalsString",
     cell: ({ row }) => <div className="text-sm">{row.original.team}</div>,
   },
@@ -178,19 +192,19 @@ export const usersColumns: ColumnDef<UserRow>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: "Trang thai",
     filterFn: "equalsString",
     cell: ({ row }) => <StatusBadge status={row.original.status} />,
   },
   {
     id: "joinedDate",
     accessorFn: (row) => parse(row.joinedDate, "dd MMM yyyy, h:mm a", new Date()).getTime(),
-    header: "Joined date",
+    header: "Ngay tham gia",
     cell: ({ row }) => <div className="text-foreground text-sm">{row.original.joinedDate}</div>,
   },
   {
     id: "actions",
-    header: () => <div className="text-right">Actions</div>,
+    header: () => <div className="text-right">Hanh dong</div>,
     cell: ({ row }) => (
       <div className="text-right">
         <DropdownMenu>
@@ -204,18 +218,13 @@ export const usersColumns: ColumnDef<UserRow>[] = [
               <MoreHorizontal className="size-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>View profile</DropdownMenuItem>
-            <DropdownMenuItem>Edit user</DropdownMenuItem>
-            <DropdownMenuItem>Manage team</DropdownMenuItem>
-            <DropdownMenuItem>Resend invite</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Deactivate user</DropdownMenuItem>
-          </DropdownMenuContent>
+          <DropdownMenuContent align="end" className="w-36"><DropdownMenuItem onSelect={() => onOpenUser(row.original)}>Xem chi tiet</DropdownMenuItem>
+          <DropdownMenuSeparator /><DropdownMenuItem variant="destructive" onSelect={() => onDeleteUser(row.original)}>Xoa</DropdownMenuItem></DropdownMenuContent>
         </DropdownMenu>
       </div>
     ),
     enableHiding: false,
     enableSorting: false,
   },
-];
+  ];
+}

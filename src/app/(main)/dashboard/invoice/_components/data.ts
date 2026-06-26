@@ -21,12 +21,14 @@ export const INVOICE_PAPER_SCALE = 0.6;
 
 export interface InvoiceFromDetails {
   name: string;
+  logoUrl: string;
   email: string;
   phone: string;
   website: string;
   addressLines: string[];
   taxId: string;
   paymentAccountName: string;
+  paymentBankName: string;
   routingNumber: string;
   issuerName: string;
 }
@@ -40,6 +42,8 @@ export interface InvoiceToDetails {
 }
 
 export interface InvoiceFormValues {
+  orderId: string;
+  invoiceTitle: string;
   referenceNumber: string;
   issuedDate: string;
   paymentDueDate: string;
@@ -54,90 +58,59 @@ export interface InvoiceFormValues {
 const today = new Date();
 
 export const defaultInvoiceValues: InvoiceFormValues = {
-  referenceNumber: "FL-0425",
+  orderId: "",
+  invoiceTitle: "Hoa don",
+  referenceNumber: `INV-${format(today, "yyMMdd")}`,
   issuedDate: format(today, "yyyy-MM-dd"),
-  paymentDueDate: format(addDays(today, 14), "yyyy-MM-dd"),
+  paymentDueDate: format(addDays(today, 7), "yyyy-MM-dd"),
   from: {
-    name: "Weblabs Studio",
-    email: "hello@weblabs.studio",
-    phone: "+1-512-555-0184",
-    website: "weblabs.studio",
-    addressLines: ["214 Pixel Avenue", "Austin, TX 78701"],
-    taxId: "WS-1029384756",
-    paymentAccountName: "Mercury Business",
-    routingNumber: "084009519",
-    issuerName: "Arham Khan",
+    name: "Fobtrans",
+    logoUrl: "",
+    email: "",
+    phone: "",
+    website: "",
+    addressLines: [],
+    taxId: "",
+    paymentAccountName: "Tai khoan thanh toan",
+    paymentBankName: "",
+    routingNumber: "",
+    issuerName: "Fobtrans",
   },
   to: {
-    id: "aiy-cap",
-    name: "AIY Cap",
-    email: "finance@aiycap.com",
-    addressLines: ["One BKC, Bandra Kurla Complex", "Mumbai, Maharashtra 400051"],
-    taxId: "GSTIN-27AAICA9102K1Z7",
+    id: "",
+    name: "Chon don hang de lay khach hang",
+    email: "",
+    addressLines: [],
+    taxId: "",
   },
-  taxId: "vat",
+  taxId: "vat-8",
   discountType: "fixed",
-  discountValue: 40,
+  discountValue: 0,
   items: [
     {
-      id: "hosting",
-      description: "Cloud hosting services",
+      id: "service-fee",
+      description: "Phi dich vu van chuyen",
       quantity: 1,
-      unitPrice: 3500,
-    },
-    {
-      id: "analytics",
-      description: "Data analytics report",
-      quantity: 2,
-      unitPrice: 750,
-    },
-    {
-      id: "support",
-      description: "Technical support retainer",
-      quantity: 1,
-      unitPrice: 400,
+      unitPrice: 0,
     },
   ],
 };
 
 export const invoiceTaxOptions: InvoiceTaxOption[] = [
   {
-    id: "gst",
-    name: "GST",
-    rate: 18,
-  },
-  {
-    id: "vat",
+    id: "vat-8",
     name: "VAT",
-    rate: 12,
+    rate: 8,
   },
   {
-    id: "service-tax",
-    name: "Service Tax",
+    id: "vat-10",
+    name: "VAT",
     rate: 10,
   },
   {
     id: "none",
-    name: "No Tax",
+    name: "Khong tinh thue",
     rate: 0,
-  },
-];
-
-export const invoiceClients: InvoiceToDetails[] = [
-  {
-    id: "bright-enterprises",
-    name: "Bright Enterprises",
-    email: "billing@brightenterprises.com",
-    addressLines: ["450 Park Avenue South", "New York, NY 10016", "United States"],
-    taxId: "US-EIN-84-2938475",
-  },
-  defaultInvoiceValues.to,
-  {
-    id: "northline-gmbh",
-    name: "Northline GmbH",
-    email: "ap@northline.de",
-    addressLines: ["Kastanienallee 32", "10435 Berlin", "Germany"],
-    taxId: "DE-VAT-219384756",
   },
 ];
 

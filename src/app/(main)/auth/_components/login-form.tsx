@@ -11,8 +11,8 @@ import { Field, FieldContent, FieldError, FieldGroup, FieldLabel } from "@/compo
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  email: z.string().email({ message: "Vui lòng nhập email hoặc tên đăng nhập." }),
+  password: z.string().min(6, { message: "Mật khẩu tối thiểu 6 ký tự." }),
   remember: z.boolean().optional(),
 });
 
@@ -44,7 +44,7 @@ export function LoginForm() {
           name="email"
           render={({ field, fieldState }) => (
             <Field className="gap-1.5" data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="login-email">Email Address</FieldLabel>
+              <FieldLabel htmlFor="login-email">Email/Tên đăng nhập</FieldLabel>
               <Input
                 {...field}
                 id="login-email"
@@ -62,7 +62,7 @@ export function LoginForm() {
           name="password"
           render={({ field, fieldState }) => (
             <Field className="gap-1.5" data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="login-password">Password</FieldLabel>
+              <FieldLabel htmlFor="login-password">Mật khẩu</FieldLabel>
               <Input
                 {...field}
                 id="login-password"
@@ -89,7 +89,7 @@ export function LoginForm() {
               />
               <FieldContent>
                 <FieldLabel htmlFor="login-remember" className="font-normal">
-                  Remember me for 30 days
+                  Ghi nhớ đăng nhập trong 30 ngày
                 </FieldLabel>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </FieldContent>
@@ -98,7 +98,7 @@ export function LoginForm() {
         />
       </FieldGroup>
       <Button className="w-full" type="submit">
-        Login
+        Đăng nhập
       </Button>
     </form>
   );

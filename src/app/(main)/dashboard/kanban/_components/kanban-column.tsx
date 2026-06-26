@@ -1,7 +1,7 @@
 "use client";
 
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { GripVertical, MoreVertical, Plus } from "lucide-react";
+import { GripVertical } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -48,17 +48,7 @@ export function KanbanColumn({ column, tasks }: KanbanColumnProps) {
             </Button>
             <h2 className="truncate font-medium text-base leading-none">{column.title}</h2>
           </div>
-          <p className="text-muted-foreground text-sm tabular-nums leading-none">
-            {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
-          </p>
-        </div>
-        <div className="-mr-2 flex items-center gap-0.5 text-muted-foreground">
-          <Button variant="ghost" size="icon-sm" aria-label={`Add task to ${column.title}`}>
-            <Plus />
-          </Button>
-          <Button variant="ghost" size="icon-sm" aria-label={`${column.title} column actions`}>
-            <MoreVertical />
-          </Button>
+          <p className="text-muted-foreground text-sm tabular-nums leading-none">{tasks.length} don</p>
         </div>
       </div>
 

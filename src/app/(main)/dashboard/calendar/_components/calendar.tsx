@@ -9,35 +9,46 @@ import listPlugin from "@fullcalendar/react/list";
 import multiMonthPlugin from "@fullcalendar/react/multimonth";
 import timeGridPlugin from "@fullcalendar/react/timegrid";
 import { differenceInCalendarDays, endOfMonth, format, startOfMonth } from "date-fns";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, XIcon } from "lucide-react";
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, XIcon } from "lucide-react";
 
 import { EventCalendarViews } from "@/components/calendar/event-calendar-views";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { demoEvents } from "./events-data";
+import type { OrderCalendarEvent, OrderCalendarEventKind } from "./events-data";
 
 const views = [
-  { key: "dayGridMonth", label: "Month" },
-  { key: "timeGridWeek", label: "Week" },
-  { key: "timeGridDay", label: "Day" },
+  { key: "dayGridMonth", label: "Tháng" },
+  { key: "timeGridWeek", label: "Tuần" },
+  { key: "timeGridDay", label: "Ngày" },
 ];
 
-const calendars = [
-  { key: "all", label: "All calendars" },
-  { key: "work", label: "Work" },
-  { key: "personal", label: "Personal" },
-  { key: "team", label: "Team" },
-  { key: "focus", label: "Focus time" },
+const calendars: Array<{ key: "all" | OrderCalendarEventKind; label: string }> = [
+  { key: "all", label: "Tất cả lịch" },
+  { key: "delivery", label: "Lịch giao hàng" },
+  { key: "payment", label: "Lịch thanh toán" },
 ];
 
 const plugins = [dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, multiMonthPlugin];
 
-export function Calendar() {
+function isEventInRange(event: OrderCalendarEvent, start: Date, end: Date) {
+  const eventDate = new Date(event.start);
+
+  return eventDate >= start && eventDate < end;
+}
+
+export function Calendar({ events }: { events: OrderCalendarEvent[] }) {
   const controller = useCalendarController();
-  const [eventCount, setEventCount] = React.useState(0);
-  const [selectedCalendar, setSelectedCalendar] = React.useState(calendars[0].key);
+  const [selectedCalendar, setSelectedCalendar] = React.useState<(typeof calendars)[number]["key"]>("all");
+  const [visibleRange, setVisibleRange] = React.useState(() => {
+    const now = new Date();
+
+    return {
+      start: startOfMonth(now),
+      end: endOfMonth(now),
+    };
+  });
   const [dateInfo, setDateInfo] = React.useState(() => {
     const now = new Date();
 
@@ -46,6 +57,17 @@ export function Calendar() {
       days: differenceInCalendarDays(endOfMonth(now), startOfMonth(now)) + 1,
     };
   });
+
+  const filteredEvents = React.useMemo(() => {
+    if (selectedCalendar === "all") return events;
+
+    return events.filter((event) => event.extendedProps.kind === selectedCalendar);
+  }, [events, selectedCalendar]);
+
+  const eventCount = React.useMemo(
+    () => filteredEvents.filter((event) => isEventInRange(event, visibleRange.start, visibleRange.end)).length,
+    [filteredEvents, visibleRange],
+  );
   const title = dateInfo.title;
   const days = dateInfo.days;
 
@@ -55,12 +77,15 @@ export function Calendar() {
         <div className="flex min-w-0 shrink-0 flex-col gap-1">
           <div className="font-medium text-lg leading-none">{title}</div>
           <p className="text-muted-foreground text-sm">
-            {days} days - {eventCount} events
+            {days} Ngày - {eventCount} lịch đơn hàng
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Select value={selectedCalendar} onValueChange={setSelectedCalendar}>
+          <Select
+            value={selectedCalendar}
+            onValueChange={(value) => setSelectedCalendar(value as typeof selectedCalendar)}
+          >
             <SelectTrigger className="w-full sm:w-44">
               <CalendarIcon />
               <SelectValue />
@@ -80,7 +105,7 @@ export function Calendar() {
               <ChevronLeft />
             </Button>
             <Button variant="outline" onClick={() => controller.today()}>
-              Today
+              Hôm nay
             </Button>
             <Button size="icon" variant="outline" onClick={() => controller.next()}>
               <ChevronRight />
@@ -105,10 +130,6 @@ export function Calendar() {
               </SelectGroup>
             </SelectContent>
           </Select>
-          <Button>
-            <Plus />
-            Add event
-          </Button>
         </div>
       </div>
 
@@ -117,20 +138,14 @@ export function Calendar() {
         initialView={views[0].key}
         plugins={[...plugins]}
         popoverCloseContent={() => <XIcon className="size-5 text-muted-foreground group-hover:text-foreground" />}
-        events={demoEvents}
+        events={filteredEvents}
         nowIndicator
         datesSet={(info) => {
           setDateInfo({
             title: info.view.title,
             days: differenceInCalendarDays(info.view.currentEnd, info.view.currentStart),
           });
-          setEventCount(
-            demoEvents.filter((event) => {
-              const start = new Date(event.start);
-
-              return start >= info.start && start < info.end;
-            }).length,
-          );
+          setVisibleRange({ start: info.start, end: info.end });
         }}
       />
     </div>

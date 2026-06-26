@@ -1,76 +1,52 @@
-import { Plus } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { getInitials } from "@/lib/utils";
 
-import { type InvoiceFormValues, invoiceClients } from "./data";
+import type { InvoiceFormValues } from "./data";
 
 export function ClientSelector() {
-  const { control } = useFormContext<InvoiceFormValues>();
+  const { register, watch } = useFormContext<InvoiceFormValues>();
+  const selectedClient = watch("to");
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="font-medium tracking-tight">Billed To</h2>
-        <Button type="button" variant="ghost" size="sm">
-          <Plus data-icon="inline-start" />
-          Add New Client
-        </Button>
+      <h2 className="font-medium tracking-tight">Thong tin khach hang</h2>
+
+      <div className="flex items-center gap-2 rounded-lg border bg-muted/20 p-3">
+        <Avatar className="after:rounded-md">
+          <AvatarFallback className="rounded-md bg-card text-foreground">
+            {getInitials(selectedClient.name).slice(0, 2)}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0 text-sm">
+          <div className="truncate font-medium">{selectedClient.name}</div>
+          <div className="truncate text-muted-foreground">{selectedClient.email || "Chua co email"}</div>
+        </div>
       </div>
 
-      <Controller
-        control={control}
-        name="to"
-        render={({ field }) => {
-          const selectedClient = field.value;
-
-          return (
-            <Field className="gap-1">
-              <FieldLabel className="text-xs">Client</FieldLabel>
-              <Select
-                value={selectedClient.id}
-                onValueChange={(clientId) => {
-                  const nextClient = invoiceClients.find((item) => item.id === clientId);
-
-                  if (nextClient) {
-                    field.onChange(nextClient);
-                  }
-                }}
-              >
-                <SelectTrigger className="w-full data-[size=default]:h-auto">
-                  <SelectValue placeholder="Select client">
-                    <div className="flex items-center gap-1.5">
-                      <Avatar className="after:rounded-md">
-                        <AvatarFallback className="rounded-md bg-card text-foreground">
-                          {getInitials(selectedClient.name).slice(0, 2)}
-                        </AvatarFallback>
-                      </Avatar>
-
-                      <div className="text-left text-xs">
-                        <div>{selectedClient.name}</div>
-                        <div className="text-muted-foreground">{selectedClient.email}</div>
-                      </div>
-                    </div>
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectGroup>
-                    {invoiceClients.map((clientOption) => (
-                      <SelectItem key={clientOption.id} value={clientOption.id}>
-                        {clientOption.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </Field>
-          );
-        }}
-      />
+      <div className="grid gap-4 md:grid-cols-2">
+        <Field className="gap-1">
+          <FieldLabel className="text-xs" htmlFor="client-name">
+            Ten khach hang
+          </FieldLabel>
+          <Input id="client-name" {...register("to.name")} />
+        </Field>
+        <Field className="gap-1">
+          <FieldLabel className="text-xs" htmlFor="client-tax-id">
+            Ma so thue
+          </FieldLabel>
+          <Input id="client-tax-id" {...register("to.taxId")} />
+        </Field>
+        <Field className="gap-1 md:col-span-2">
+          <FieldLabel className="text-xs" htmlFor="client-email">
+            Email
+          </FieldLabel>
+          <Input id="client-email" {...register("to.email")} />
+        </Field>
+      </div>
     </section>
   );
 }

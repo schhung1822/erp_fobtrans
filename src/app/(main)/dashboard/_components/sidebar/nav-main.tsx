@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ChevronRight, MailIcon, PlusCircleIcon } from "lucide-react";
+import { ChevronRight, MailIcon, Globe, PlusCircleIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -107,15 +107,15 @@ export function NavMain({ items }: NavMainProps) {
                 className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
               >
                 <PlusCircleIcon />
-                <span>Quick Create</span>
+                <span>Tạo đơn hàng</span>
               </SidebarMenuButton>
               <Button
                 size="icon"
                 className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
                 variant="outline"
               >
-                <MailIcon />
-                <span className="sr-only">Inbox</span>
+                <Globe />
+                <span className="sr-only">Mở website</span>
               </Button>
             </SidebarMenuItem>
           </SidebarMenu>
