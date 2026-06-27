@@ -4,6 +4,7 @@ import {
   Calendar,
   ChartBar,
   Fingerprint,
+  Gauge,
   Kanban,
   Landmark,
   LayoutDashboard,
@@ -16,7 +17,6 @@ import {
   UserCogIcon,
   Users,
   Warehouse,
-  Gauge,
 } from "lucide-react";
 
 export type NavBadge = "new" | "soon";
@@ -76,7 +76,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         id: "finance",
-        title: "T‡i chÌnh",
+        title: "T√†i ch√≠nh",
         url: "/dashboard/finance",
         icon: Banknote,
       },
@@ -154,7 +154,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         id: "login",
-        title: "–ang nh?p",
+        title: "√êang nh?p",
         url: "/auth/v1/login",
         icon: Fingerprint,
       },

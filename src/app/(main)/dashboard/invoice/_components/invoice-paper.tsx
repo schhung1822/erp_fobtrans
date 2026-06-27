@@ -18,7 +18,7 @@ import {
 export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
   const taxOption = getInvoiceTaxOption(invoice);
   const discountValue = Number.isFinite(invoice.discountValue) ? invoice.discountValue : 0;
-  const discountLabel = invoice.discountType === "percent" ? `Chiết khấu ${discountValue}%` : "Chiết khấu";
+  const discountLabel = invoice.discountType === "percent" ? `Chiáº¿t kháº¥u ${discountValue}%` : "Chiáº¿t kháº¥u";
 
   return (
     <article
@@ -50,34 +50,34 @@ export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
 
         <section className="grid grid-cols-2 gap-14 text-sm leading-relaxed">
           <div>
-            <p>Số hóa đơn: {invoice.referenceNumber}</p>
-            <p>Ngày lập: {formatInvoiceDate(invoice.issuedDate)}</p>
-            <p>Hạn thanh toán: {formatInvoiceDate(invoice.paymentDueDate)}</p>
+            <p>Sá»‘ hÃ³a Ä‘Æ¡n: {invoice.referenceNumber}</p>
+            <p>NgÃ y láº­p: {formatInvoiceDate(invoice.issuedDate)}</p>
+            <p>Háº¡n thanh toÃ¡n: {formatInvoiceDate(invoice.paymentDueDate)}</p>
           </div>
           <div>
-            <p>Tài khoản thanh toán</p>
+            <p>TÃ i khoáº£n thanh toÃ¡n</p>
             <p>{invoice.from.paymentAccountName}</p>
             <p>{invoice.from.paymentBankName}</p>
-            <p>Số tài khoản {invoice.from.routingNumber}</p>
+            <p>Sá»‘ tÃ i khoáº£n {invoice.from.routingNumber}</p>
           </div>
         </section>
 
         <section className="grid grid-cols-2 gap-14 text-sm leading-relaxed">
           <div>
-            <p className="mb-4 font-semibold uppercase">Bên bán</p>
+            <p className="mb-4 font-semibold uppercase">BÃªn bÃ¡n</p>
             <p>{invoice.from.name}</p>
             {invoice.from.addressLines.map((line) => (
               <p key={line}>{line}</p>
             ))}
-            <p>Mã số thuế: {invoice.from.taxId}</p>
+            <p>MÃ£ sá»‘ thuáº¿: {invoice.from.taxId}</p>
           </div>
           <div>
-            <p className="mb-4 font-semibold uppercase">Bên mua</p>
+            <p className="mb-4 font-semibold uppercase">BÃªn mua</p>
             <p>{invoice.to.name}</p>
             {invoice.to.addressLines.map((line) => (
               <p key={line}>{line}</p>
             ))}
-            <p>Mã số thuế: {invoice.to.taxId}</p>
+            <p>MÃ£ sá»‘ thuáº¿: {invoice.to.taxId}</p>
           </div>
         </section>
       </header>
@@ -85,10 +85,10 @@ export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
       <div className="flex flex-col gap-5">
         <section className="text-sm">
           <div className="grid grid-cols-[1fr_74px_116px_116px] bg-stone-200 px-3 py-3 font-semibold uppercase">
-            <span>Nội dung</span>
-            <span className="text-right">Số lượng</span>
-            <span className="text-right">Đơn giá</span>
-            <span className="text-right">Thành tiền</span>
+            <span>Ná»™i dung</span>
+            <span className="text-right">Sá»‘ lÆ°á»£ng</span>
+            <span className="text-right">ÄÆ¡n giÃ¡</span>
+            <span className="text-right">ThÃ nh tiá»n</span>
           </div>
           {getInvoiceItems(invoice).map((item) => (
             <div
@@ -107,7 +107,7 @@ export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
           <section className="col-start-2 space-y-2">
             <div>
               <div className="flex justify-between gap-8">
-                <span>Tạm tính</span>
+                <span>Táº¡m tÃ­nh</span>
                 <span>{formatInvoiceCurrency(getInvoiceSubtotal(invoice))}</span>
               </div>
               <div className="flex justify-between gap-8">
@@ -123,7 +123,7 @@ export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
             </div>
             <div className="border-current border-y-2 py-3">
               <div className="flex justify-between gap-8">
-                <span className="font-semibold uppercase">Tổng thanh toán</span>
+                <span className="font-semibold uppercase">Tá»•ng thanh toÃ¡n</span>
                 <span className="font-semibold">{formatInvoiceCurrency(getInvoiceTotal(invoice))}</span>
               </div>
             </div>
@@ -138,8 +138,8 @@ export function InvoicePaper({ invoice }: { invoice: InvoiceFormValues }) {
           <p>{invoice.from.website}</p>
         </div>
         <div>
-          <p>Hóa đơn được lập từ dữ liệu đơn hàng.</p>
-          <p>Người lập {invoice.from.issuerName}</p>
+          <p>HÃ³a Ä‘Æ¡n Ä‘Æ°á»£c láº­p tá»« dá»¯ liá»‡u Ä‘Æ¡n hÃ ng.</p>
+          <p>NgÆ°á»i láº­p {invoice.from.issuerName}</p>
         </div>
       </footer>
     </article>

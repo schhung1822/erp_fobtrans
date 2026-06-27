@@ -37,9 +37,9 @@ export const defaultNotificationSettings: NotificationSettings = {
   telegramBotToken: "",
   telegramChatId: "",
   orderTemplate:
-    "Đơn hàng mới: {order_code}\nKhách hàng: {customer_name}\nSĐT: {phone}\nNgười nhận: {receiver_name}\nTổng tiền: {total_charge_vnd}\nGhi chú: {note}",
+    "ÄÆ¡n hÃ ng má»›i: {order_code}\nKhÃ¡ch hÃ ng: {customer_name}\nSÄT: {phone}\nNgÆ°á»i nháº­n: {receiver_name}\nTá»•ng tiá»n: {total_charge_vnd}\nGhi chÃº: {note}",
   contactTemplate:
-    "Liên hệ mới: {contact_name}\nKhách hàng: {customer_name}\nChức danh: {title}\nSĐT: {phone}\nEmail: {email}\nGhi chú: {note}",
+    "LiÃªn há»‡ má»›i: {contact_name}\nKhÃ¡ch hÃ ng: {customer_name}\nChá»©c danh: {title}\nSÄT: {phone}\nEmail: {email}\nGhi chÃº: {note}",
 };
 
 export async function ensureNotificationSettingsTable() {

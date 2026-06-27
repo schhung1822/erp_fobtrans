@@ -14,18 +14,19 @@ export default async function Page() {
   return (
     <div className="flex flex-col gap-4">
       <div className="space-y-1">
-        <h1 className="text-3xl tracking-tight">Báo cáo tổng hợp</h1>
+        <h1 className="text-3xl tracking-tight">BÃ¡o cÃ¡o tá»•ng há»£p</h1>
         <p className="text-muted-foreground text-sm">
-          Theo dõi sóng lead, đơn hàng, doanh thu đối soát và công nợ từ dữ liệu vận hành thực tế.
+          Theo dÃµi sÃ³ng lead, Ä‘Æ¡n hÃ ng, doanh thu Ä‘á»‘i soÃ¡t vÃ  cÃ´ng ná»£ tá»« dá»¯ liá»‡u váº­n hÃ nh thá»±c
+          táº¿.
         </p>
       </div>
 
       <Tabs defaultValue="overview" className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <TabsList className="gap-1">
-            <TabsTrigger value="overview">Tổng quan</TabsTrigger>
-            <TabsTrigger value="staff">Nhân sự</TabsTrigger>
-            <TabsTrigger value="segments">Cơ cấu</TabsTrigger>
+            <TabsTrigger value="overview">Tá»•ng quan</TabsTrigger>
+            <TabsTrigger value="staff">NhÃ¢n sá»±</TabsTrigger>
+            <TabsTrigger value="segments">CÆ¡ cáº¥u</TabsTrigger>
           </TabsList>
 
           <AnalyticsToolbar rangeLabel={data.rangeLabel} />

@@ -75,7 +75,7 @@ function LogoUploadField() {
           )}
         </div>
         <div className="grid min-w-0 flex-1 gap-1">
-          <div className="truncate text-muted-foreground text-xs">{logoUrl || "Chưa có logo"}</div>
+          <div className="truncate text-muted-foreground text-xs">{logoUrl || "ChÆ°a cÃ³ logo"}</div>
           <Button
             type="button"
             variant="outline"
@@ -84,7 +84,7 @@ function LogoUploadField() {
             disabled={isPending}
           >
             <ImageUpIcon />
-            {isPending ? "Đang tải..." : "Tải logo lên"}
+            {isPending ? "Äang táº£i..." : "Táº£i logo lÃªn"}
           </Button>
         </div>
       </div>
@@ -98,26 +98,26 @@ export function BusinessDetails() {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="font-medium tracking-tight">Thông tin doanh nghiệp</h2>
+        <h2 className="font-medium tracking-tight">ThÃ´ng tin doanh nghiá»‡p</h2>
         <SaveInvoiceSettingsButton scope="business" />
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="invoice-title">
-            Tiêu đề trên hóa đơn
+            TiÃªu Ä‘á» trÃªn hÃ³a Ä‘Æ¡n
           </FieldLabel>
           <Input id="invoice-title" {...register("invoiceTitle")} />
         </Field>
         <LogoUploadField />
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-name">
-            Tên doanh nghiệp
+            TÃªn doanh nghiá»‡p
           </FieldLabel>
           <Input id="business-name" {...register("from.name")} />
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-tax-id">
-            Mã số thuế
+            MÃ£ sá»‘ thuáº¿
           </FieldLabel>
           <Input id="business-tax-id" {...register("from.taxId")} />
         </Field>
@@ -129,7 +129,7 @@ export function BusinessDetails() {
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-phone">
-            Số điện thoại
+            Sá»‘ Ä‘iá»‡n thoáº¡i
           </FieldLabel>
           <Input id="business-phone" {...register("from.phone")} />
         </Field>
@@ -141,7 +141,7 @@ export function BusinessDetails() {
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-issuer-name">
-            Người lập
+            NgÆ°á»i láº­p
           </FieldLabel>
           <Input id="business-issuer-name" {...register("from.issuerName")} />
         </Field>
@@ -151,7 +151,7 @@ export function BusinessDetails() {
           render={({ field }) => (
             <Field className="gap-1 md:col-span-2">
               <FieldLabel className="text-xs" htmlFor="business-address">
-                Địa chỉ doanh nghiệp
+                Äá»‹a chá»‰ doanh nghiá»‡p
               </FieldLabel>
               <Textarea
                 id="business-address"
