@@ -154,7 +154,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         id: "login",
-        title: "Ðang nh?p",
+        title: "Ðang nhập",
         url: "/auth/v1/login",
         icon: Fingerprint,
       },
