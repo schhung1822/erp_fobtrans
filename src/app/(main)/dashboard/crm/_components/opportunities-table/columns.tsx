@@ -1,34 +1,33 @@
-"use client";
+﻿"use client";
 "use no memo";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { Pencil } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 
+import { crmLeadStatusLabels } from "../constants";
 import type { OpportunityRow } from "./schema";
 
-const healthStripSlots = Array.from({ length: 18 }, (_, index) => ({
-  id: `strip-${index + 1}`,
-  threshold: index + 1,
-}));
+const statusClasses: Record<OpportunityRow["leadStatus"], string> = {
+  new: "border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300",
+  potential: "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+  loyal: "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+  silent: "border-muted-foreground/25 bg-muted text-muted-foreground",
+};
 
-function getHealthScore(health: OpportunityRow["health"]) {
-  switch (health) {
-    case "On Track":
-      return 18;
-    case "Needs Review":
-      return 11;
-    case "At Risk":
-      return 7;
-    case "On Hold":
-      return 4;
-    default:
-      return 0;
-  }
+function formatVnd(value: number) {
+  return formatCurrency(value, {
+    currency: "VND",
+    locale: "vi-VN",
+    noDecimals: true,
+  });
+}
+
+function formatDate(value: string | null) {
+  if (!value) return "-";
+  return new Intl.DateTimeFormat("vi-VN", { dateStyle: "short" }).format(new Date(value));
 }
 
 export const opportunitiesColumns: ColumnDef<OpportunityRow>[] = [
@@ -38,83 +37,69 @@ export const opportunitiesColumns: ColumnDef<OpportunityRow>[] = [
       <Checkbox
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all opportunities"
+        aria-label="Chọn tất cả lead"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label={`Select ${row.original.account}`}
+        aria-label={`Chọn ${row.original.name}`}
       />
     ),
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => <div className="text-sm tracking-tight">{row.original.id}</div>,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "account",
-    header: "Account",
-    cell: ({ row }) => <div className="font-medium text-sm">{row.original.account}</div>,
-  },
-  {
-    accessorKey: "stage",
-    header: "Stage",
+    accessorKey: "name",
+    header: "Lead",
     cell: ({ row }) => (
-      <Badge variant="outline" className="rounded-full px-2.5">
-        {row.original.stage}
+      <div className="grid gap-0.5">
+        <div className="font-medium text-sm">{row.original.name}</div>
+        <div className="text-muted-foreground text-xs">
+          {row.original.customerName ?? row.original.phone ?? "Chưa có khách hàng"}
+        </div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "leadStatus",
+    header: "Trạng thái",
+    cell: ({ row }) => (
+      <Badge variant="outline" className={statusClasses[row.original.leadStatus]}>
+        {crmLeadStatusLabels[row.original.leadStatus]}
       </Badge>
     ),
     filterFn: "equalsString",
   },
   {
-    accessorKey: "priority",
-    header: "Priority",
-    cell: ({ row }) => <div className="text-sm">{row.original.priority}</div>,
+    accessorKey: "staffName",
+    header: "Nhân sự",
+    cell: ({ row }) => <div className="text-sm">{row.original.staffName ?? "Chưa gán"}</div>,
   },
   {
-    accessorKey: "health",
-    header: "Health",
+    accessorKey: "orderCount",
+    header: () => <div className="text-right">Đơn hàng</div>,
     cell: ({ row }) => (
-      <div className="flex items-end gap-0.5" title={row.original.health}>
-        <span className="sr-only">{row.original.health}</span>
-        {healthStripSlots.map((slot) => (
-          <div
-            key={`${row.original.id}-${slot.id}`}
-            className={cn(
-              "h-5 w-1 rounded-full",
-              slot.threshold <= getHealthScore(row.original.health) ? "bg-green-500/85" : "bg-green-500/15",
-            )}
-          />
-        ))}
-      </div>
+      <div className="text-right text-sm tabular-nums">{row.original.orderCount.toLocaleString("vi-VN")}</div>
     ),
-    filterFn: "equalsString",
   },
   {
-    accessorKey: "value",
-    header: "Value",
-    cell: ({ row }) => <div className="font-medium text-sm tabular-nums">{row.original.value}</div>,
+    accessorKey: "totalChargeVnd",
+    header: () => <div className="text-right">Doanh thu</div>,
+    cell: ({ row }) => (
+      <div className="text-right font-medium text-sm tabular-nums">{formatVnd(row.original.totalChargeVnd)}</div>
+    ),
   },
   {
-    id: "actions",
-    header: () => <div className="text-right">Edit</div>,
-    cell: () => (
-      <div className="text-right">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-8 rounded-full text-muted-foreground hover:bg-transparent focus-visible:bg-transparent"
-        >
-          <Pencil />
-          <span className="sr-only">Edit opportunity</span>
-        </Button>
-      </div>
+    accessorKey: "remainingAmountVnd",
+    header: () => <div className="text-right">Còn phải thu</div>,
+    cell: ({ row }) => (
+      <div className="text-right text-sm tabular-nums">{formatVnd(row.original.remainingAmountVnd)}</div>
     ),
-    enableHiding: false,
+  },
+  {
+    accessorKey: "lastOrderAt",
+    header: "Đơn gần nhất",
+    cell: ({ row }) => <div className="text-sm tabular-nums">{formatDate(row.original.lastOrderAt)}</div>,
   },
 ];

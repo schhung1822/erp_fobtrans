@@ -56,20 +56,20 @@ export function InvoiceItems() {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-medium tracking-tight">Hang muc hoa don</h2>
+        <h2 className="font-medium tracking-tight">Hạng mục hóa đơn</h2>
         <Button type="button" variant="ghost" size="sm" onClick={handleAddItem}>
           <Plus data-icon="inline-start" />
-          Them dong
+          Thêm dòng
         </Button>
       </div>
 
       <div className="flex flex-col gap-2">
         <div className="hidden items-center gap-2 px-1 font-medium text-muted-foreground text-xs md:grid md:grid-cols-[24px_minmax(0,1fr)_64px_112px_112px_32px]">
           <span />
-          <span>Noi dung</span>
-          <span className="px-2">So luong</span>
-          <span className="px-2">Don gia</span>
-          <span className="text-right">Thanh tien</span>
+          <span>Nội dung</span>
+          <span className="px-2">Số lượng</span>
+          <span className="px-2">Đơn giá</span>
+          <span className="text-right">Thành tiền</span>
           <span />
         </div>
 
@@ -143,25 +143,25 @@ function SortableInvoiceItemRow({
       </Button>
       <Input
         className="min-w-0 text-sm max-md:col-span-3"
-        aria-label={`Noi dung dong ${index + 1}`}
+        aria-label={`Nội dung dòng ${index + 1}`}
         {...register(`items.${index}.description` as const)}
       />
       <Input
         type="number"
         step="1"
         className="text-sm max-md:col-start-2 max-md:row-start-2"
-        aria-label={`So luong dong ${index + 1}`}
+        aria-label={`Số lượng dòng ${index + 1}`}
         {...register(`items.${index}.quantity` as const, { valueAsNumber: true })}
       />
       <Input
         type="number"
         step="0.01"
         className="text-sm max-md:col-start-3 max-md:row-start-2"
-        aria-label={`Don gia dong ${index + 1}`}
+        aria-label={`Đơn giá dòng ${index + 1}`}
         {...register(`items.${index}.unitPrice` as const, { valueAsNumber: true })}
       />
       <div className="min-w-0 text-right font-medium text-sm max-md:col-span-3 max-md:col-start-2 max-md:row-start-3 max-md:flex max-md:items-center max-md:justify-between max-md:text-left">
-        <span className="hidden text-muted-foreground max-md:inline">Thanh tien</span>
+        <span className="hidden text-muted-foreground max-md:inline">Thành tiền</span>
         <span>{formatInvoiceCurrency(getLineAmount(item))}</span>
       </div>
       <Button
@@ -169,7 +169,7 @@ function SortableInvoiceItemRow({
         variant="ghost"
         size="icon-sm"
         className="max-md:col-start-4 max-md:row-start-2"
-        aria-label={`Xoa dong ${index + 1}`}
+        aria-label={`Xóa dòng ${index + 1}`}
         onClick={onRemove}
       >
         <Trash2 />

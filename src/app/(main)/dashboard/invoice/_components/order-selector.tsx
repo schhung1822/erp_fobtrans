@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 
@@ -9,12 +9,12 @@ import type { InvoiceFormValues } from "./data";
 import type { InvoiceOrderOption } from "./invoice-orders";
 
 function buildOrderItem(order: InvoiceOrderOption) {
-  const goods = order.cargoName ?? `${order.totalPackages.toLocaleString("vi-VN")} kien`;
+  const goods = order.cargoName ?? `${order.totalPackages.toLocaleString("vi-VN")} kiện`;
   const meta = `${order.totalWeightKg.toLocaleString("vi-VN")} kg / ${order.totalVolumeM3.toLocaleString("vi-VN")} m3`;
 
   return {
     id: order.id,
-    description: `Don ${order.code} - ${goods} (${meta})`,
+    description: `Đơn ${order.code} - ${goods} (${meta})`,
     quantity: 1,
     unitPrice: order.remainingAmountVnd > 0 ? order.remainingAmountVnd : order.totalChargeVnd,
   };
@@ -61,13 +61,13 @@ export function OrderSelector({ orders }: { orders: InvoiceOrderOption[] }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-medium tracking-tight">Don hang thanh toan</h2>
+      <h2 className="font-medium tracking-tight">Đơn hàng thanh toán</h2>
       <Controller
         control={control}
         name="orderId"
         render={({ field }) => (
           <Field className="gap-1">
-            <FieldLabel className="text-xs">Chon don hang</FieldLabel>
+            <FieldLabel className="text-xs">Chọn đơn hàng</FieldLabel>
             <Select
               value={field.value}
               onValueChange={(orderId) => {
@@ -76,7 +76,7 @@ export function OrderSelector({ orders }: { orders: InvoiceOrderOption[] }) {
               }}
             >
               <SelectTrigger className="w-full data-[size=default]:h-auto">
-                <SelectValue placeholder="Chon don hang" />
+                <SelectValue placeholder="Chọn đơn hàng" />
               </SelectTrigger>
               <SelectContent position="popper">
                 <SelectGroup>

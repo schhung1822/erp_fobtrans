@@ -16,27 +16,27 @@ function formatVnd(value: number) {
 export function MetricCards({ summary }: { summary: DefaultDashboardSummary }) {
   const cards = [
     {
-      title: "Lien he moi",
+      title: "Lead mới",
       value: summary.newContacts.toLocaleString("vi-VN"),
-      note: "Lead moi trong thang nay",
+      note: "Lead mới trong kỳ đã chọn",
       icon: UserPlus,
     },
     {
-      title: "Khach hang moi",
+      title: "Khách hàng mới",
       value: summary.newCustomers.toLocaleString("vi-VN"),
-      note: "Ho so customer moi trong thang nay",
+      note: "Hồ sơ customer mới trong kỳ đã chọn",
       icon: UsersRound,
     },
     {
-      title: "Don hang",
+      title: "Tổng đơn hàng",
       value: summary.orders.toLocaleString("vi-VN"),
-      note: "Don tao trong thang nay",
+      note: `${summary.leadOrders.toLocaleString("vi-VN")} đơn theo lead, ${summary.oldCustomerOrders.toLocaleString("vi-VN")} đơn khách cũ`,
       icon: PackageCheckIcon,
     },
     {
-      title: "Doanh thu",
+      title: "Doanh thu đối soát",
       value: formatVnd(summary.revenueVnd),
-      note: "Doanh thu doi soat trong thang nay",
+      note: "Hiển thị khi phần tài chính đã được tính",
       icon: DollarSign,
     },
   ];

@@ -113,7 +113,7 @@ export async function getInvoiceOrderOptions(): Promise<InvoiceOrderOption[]> {
     return {
       id: row.order_id,
       code: row.order_code,
-      customerName: row.customer_name ?? "Chua co khach hang",
+      customerName: row.customer_name ?? "Chưa có khách hàng",
       customerCode: row.customer_code,
       customerEmail: row.email ?? "",
       customerTaxId: row.tax_code ?? "",

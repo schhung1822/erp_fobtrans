@@ -72,7 +72,7 @@ export async function getOperationsData(): Promise<OperationWarehouseRow[]> {
   return rows.map((row) => ({
     id: row.warehouse_id,
     code: row.warehouse_code,
-    name: row.warehouse_name ?? "Chua co ten kho",
+    name: row.warehouse_name ?? "Chưa có tên kho",
     address: row.address,
     isActive: toNumber(row.is_active) === 1,
     orderCount: toNumber(row.order_count),

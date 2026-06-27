@@ -49,11 +49,11 @@ import { CustomerFormDialog } from "./customer-form";
 import type { CustomerRow } from "./schema";
 
 const sortOptions = [
-  { value: "updated-desc", label: "Moi cap nhat" },
-  { value: "orders-desc", label: "Nhieu don nhat" },
-  { value: "revenue-desc", label: "Doanh thu cao nhat" },
-  { value: "debt-desc", label: "Cong no cao nhat" },
-  { value: "name-asc", label: "Ten A-Z" },
+  { value: "updated-desc", label: "Mới cập nhật" },
+  { value: "orders-desc", label: "Nhiều đơn nhất" },
+  { value: "revenue-desc", label: "Doanh thu cao nhất" },
+  { value: "debt-desc", label: "Công nợ cao nhất" },
+  { value: "name-asc", label: "Tên A-Z" },
 ] as const;
 
 type CustomersView = "all" | "ordered" | "debt";
@@ -150,17 +150,17 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
           <TabsList className="**:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
             <TabsTrigger value="all">Tat ca</TabsTrigger>
             <TabsTrigger value="ordered">
-              Co don <Badge variant="secondary">{orderedCount}</Badge>
+              Có đơn <Badge variant="secondary">{orderedCount}</Badge>
             </TabsTrigger>
             <TabsTrigger value="debt">
-              Cong no <Badge variant="secondary">{debtCount}</Badge>
+              Công nợ <Badge variant="secondary">{debtCount}</Badge>
             </TabsTrigger>
           </TabsList>
           <div className="relative w-full lg:w-80">
             <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="h-8 rounded-[min(var(--radius-md),12px)] pl-8"
-              placeholder="Tim ten, ma KH, SDT, dia chi..."
+              placeholder="Tìm tên, SDT, mã khách hàng..."
               value={searchQuery}
               onChange={(event) => {
                 table.getColumn("search")?.setFilterValue(event.target.value || undefined);
@@ -174,7 +174,7 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <ArrowUpDown />
-                Sap xep
+                Sắp xếp
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -194,12 +194,12 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <Settings2 data-icon="inline-start" />
-                Cot
+                Kiểu xem
                 <ChevronDownIcon data-icon="inline-end" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuLabel>Hien thi cot</DropdownMenuLabel>
+              <DropdownMenuLabel>Hiển thị cột</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {table
                 .getAllColumns()
@@ -247,7 +247,7 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
               ) : (
                 <TableRow>
                   <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-28 text-center">
-                    Chua co khach hang phu hop.
+                    Chưa có khách hàng phù hợp
                   </TableCell>
                 </TableRow>
               )}
@@ -256,13 +256,13 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="hidden flex-1 text-muted-foreground text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} khach hang
-            duoc chon.
+            {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} khách hàng
+            được chọn.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="customers-rows-per-page" className="font-medium text-sm">
-                Dong moi trang
+                Dòng mỗi trang
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -302,7 +302,7 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">Trang truoc</span>
+                <span className="sr-only">Trang trước</span>
                 <ChevronLeftIcon />
               </Button>
               <Button
@@ -322,7 +322,7 @@ export function CustomersTable({ data }: { data: CustomerRow[] }) {
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">Trang cuoi</span>
+                <span className="sr-only">Trang cuối</span>
                 <ChevronsRightIcon />
               </Button>
             </div>

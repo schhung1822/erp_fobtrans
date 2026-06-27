@@ -41,8 +41,8 @@ function CustomerCell({ customer }: { customer: CustomerRow }) {
       </span>
       <div className="grid min-w-0 gap-0.5">
         <CustomerFormDialog customer={customer} triggerLabel={customer.name} triggerVariant="link" />
-        <span className="truncate text-muted-foreground text-xs leading-none" title={customer.code ?? "Chua co ma KH"}>
-          {customer.code ?? "Chua co ma KH"}
+        <span className="truncate text-muted-foreground text-xs leading-none" title={customer.code ?? "Chưa có mã KH"}>
+          {customer.code ?? "Chưa có mã KH"}
         </span>
       </div>
     </div>
@@ -57,7 +57,7 @@ export const customersColumns: ColumnDef<CustomerRow>[] = [
         <Checkbox
           checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Chon tat ca khach hang tren trang"
+          aria-label="Chọn tất cả khách hàng trong trang"
         />
       </div>
     ),
@@ -66,7 +66,7 @@ export const customersColumns: ColumnDef<CustomerRow>[] = [
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label={`Chon khach hang ${row.original.name}`}
+          aria-label={`Chọn khách hàng ${row.original.name}`}
         />
       </div>
     ),
@@ -87,71 +87,71 @@ export const customersColumns: ColumnDef<CustomerRow>[] = [
   },
   {
     accessorKey: "name",
-    header: "Khach hang",
+    header: "Khách hàng",
     cell: ({ row }) => <CustomerCell customer={row.original} />,
     enableHiding: false,
   },
   {
     accessorKey: "phone",
-    header: "Lien he",
+    header: "Liên hệ",
     cell: ({ row }) => (
       <div className="flex w-40 min-w-0 max-w-40 items-center gap-2 text-sm">
         <PhoneIcon className="size-4 shrink-0 text-muted-foreground" />
-        <span className="truncate" title={row.original.phone ?? "Chua co SDT"}>
-          {row.original.phone ?? "Chua co SDT"}
+        <span className="truncate" title={row.original.phone ?? "Chưa có số điện thoại"}>
+          {row.original.phone ?? "Chưa có SDT"}
         </span>
       </div>
     ),
   },
   {
     accessorKey: "taxCode",
-    header: "Thue",
+    header: "Thuế",
     cell: ({ row }) => (
       <div className="w-36 min-w-0 max-w-36 text-sm">
-        <span className="block truncate" title={row.original.taxCode ?? "Chua co MST"}>
-          {row.original.taxCode ?? "Chua co MST"}
+        <span className="block truncate" title={row.original.taxCode ?? "Chưa có MST"}>
+          {row.original.taxCode ?? "Chưa có MST"}
         </span>
       </div>
     ),
   },
   {
     accessorKey: "deliveryAddress",
-    header: "Dia chi",
+    header: "Địa chỉ",
     cell: ({ row }) => (
       <div className="flex w-72 min-w-0 max-w-72 items-center gap-2 text-sm">
         <MapPinIcon className="size-4 shrink-0 text-muted-foreground" />
         <span
           className="truncate"
-          title={row.original.deliveryAddress ?? row.original.billingAddress ?? "Chua co dia chi"}
+          title={row.original.deliveryAddress ?? row.original.billingAddress ?? "Chưa có địa chỉ"}
         >
-          {row.original.deliveryAddress ?? row.original.billingAddress ?? "Chua co dia chi"}
+          {row.original.deliveryAddress ?? row.original.billingAddress ?? "Chưa có địa chỉ"}
         </span>
       </div>
     ),
   },
   {
     accessorKey: "note",
-    header: "Ghi chu",
+    header: "Ghi chú",
     cell: ({ row }) => (
       <div className="w-48 min-w-0 max-w-48 text-sm">
-        <span className="block truncate" title={row.original.note ?? "Chua co ghi chu"}>
-          {row.original.note ?? "Chua co ghi chu"}
+        <span className="block truncate" title={row.original.note ?? "Chưa có ghi chú"}>
+          {row.original.note ?? "Chưa có ghi chú"}
         </span>
       </div>
     ),
   },
   {
     accessorKey: "orderCount",
-    header: "Don hang",
+    header: "Đơn hàng",
     cell: ({ row }) => (
       <Badge variant="outline" className="px-1.5 text-muted-foreground">
-        {row.original.orderCount.toLocaleString("vi-VN")} don
+        {row.original.orderCount.toLocaleString("vi-VN")} đơn
       </Badge>
     ),
   },
   {
     accessorKey: "lastOrderDate",
-    header: "Gan nhat",
+    header: "Gần nhất",
     cell: ({ row }) => <div className="whitespace-nowrap text-sm">{formatDate(row.original.lastOrderDate)}</div>,
   },
   {
@@ -163,14 +163,14 @@ export const customersColumns: ColumnDef<CustomerRow>[] = [
   },
   {
     accessorKey: "totalReceivableVnd",
-    header: () => <div className="text-right">Cong no</div>,
+    header: () => <div className="text-right">Công nợ</div>,
     cell: ({ row }) => (
       <div className="whitespace-nowrap text-right text-sm">{formatVnd(row.original.totalReceivableVnd)}</div>
     ),
   },
   {
     id: "actions",
-    header: () => <div className="text-right">Tac vu</div>,
+    header: () => <div className="text-right">Tác vụ</div>,
     cell: ({ row }) => (
       <div className="text-right">
         <DropdownMenu>

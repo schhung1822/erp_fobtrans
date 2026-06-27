@@ -75,7 +75,7 @@ export function UsersTable({ table }: { table: TableType<UserRow> }) {
             ) : (
               <TableRow>
                 <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-24 text-center">
-                  No results.
+                  Không có kết quả.
                 </TableCell>
               </TableRow>
             )}
@@ -88,7 +88,7 @@ export function UsersTable({ table }: { table: TableType<UserRow> }) {
       <div className="flex items-center justify-between px-4">
         <div className="flex items-center gap-4 text-muted-foreground text-sm">
           <div className="flex items-center gap-2">
-            <span>Hang da chon</span>
+            <span>Số hàng mỗi trang</span>
             <Select
               value={`${table.getState().pagination.pageSize}`}
               onValueChange={(value) => table.setPageSize(Number(value))}
@@ -108,7 +108,7 @@ export function UsersTable({ table }: { table: TableType<UserRow> }) {
             </Select>
           </div>
           <span>
-            Trang {currentPage} cua {pageCount}
+            Trang {currentPage} / {pageCount}
           </span>
         </div>
 

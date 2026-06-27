@@ -1,7 +1,7 @@
 import { DownloadIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
@@ -23,13 +23,6 @@ function formatPercent(value: number) {
   }).format(value);
 }
 
-function formatMonthLabel(value: string) {
-  const [year, month] = value.split("-").map(Number);
-  return new Intl.DateTimeFormat("vi-VN", { month: "2-digit", timeZone: "UTC", year: "numeric" }).format(
-    new Date(Date.UTC(year, month - 1, 1)),
-  );
-}
-
 function ConversionProgress({ value }: { value: number }) {
   const percent = Math.min(Math.max(value * 100, 0), 100);
 
@@ -41,25 +34,13 @@ function ConversionProgress({ value }: { value: number }) {
   );
 }
 
-export function SubscriberOverview({
-  data,
-  fromMonth,
-  toMonth,
-}: {
-  data: StaffOrderReportRow[];
-  fromMonth: string;
-  toMonth: string;
-}) {
-  const totalOrders = data.reduce((sum, row) => sum + row.orderCount, 0);
-  const rangeLabel =
-    fromMonth === toMonth ? formatMonthLabel(fromMonth) : `${formatMonthLabel(fromMonth)} - ${formatMonthLabel(toMonth)}`;
-
+export function SubscriberOverview({ data }: { data: StaffOrderReportRow[]; fromMonth: string; toMonth: string }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle className="leading-none">Báo cáo đơn hàng theo nhân sự phụ trách</CardTitle>
         <CardAction>
-          <Button variant="outline" size="sm" disabled title="Xuat file se duoc bo sung sau">
+          <Button variant="outline" size="sm" disabled title="Xuất file sẽ được bổ sung sau">
             <DownloadIcon />
             Xuất
           </Button>
@@ -73,7 +54,9 @@ export function SubscriberOverview({
               <TableRow>
                 <TableHead className="h-11">NV phụ trách</TableHead>
                 <TableHead className="h-11 text-right">Lead nhận</TableHead>
-                <TableHead className="h-11 text-right">Số đơn hàng</TableHead>
+                <TableHead className="h-11 text-right">Tổng đơn hàng</TableHead>
+                <TableHead className="h-11 text-right">Đơn theo lead</TableHead>
+                <TableHead className="h-11 text-right">Đơn khách cũ</TableHead>
                 <TableHead className="h-11 text-right">Tỷ lệ chuyển đổi</TableHead>
                 <TableHead className="h-11 text-right">Doanh thu đối soát</TableHead>
                 <TableHead className="h-11 text-right">Đã thu</TableHead>
@@ -87,11 +70,17 @@ export function SubscriberOverview({
                     <TableCell>
                       <div className="grid gap-0.5">
                         <span className="font-medium">{row.staffName}</span>
-                        <span className="text-muted-foreground text-xs">{row.staffCode ?? "Chua co ma nhan su"}</span>
+                        <span className="text-muted-foreground text-xs">{row.staffCode ?? "Chưa có mã nhân sự"}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right tabular-nums">{row.leadCount.toLocaleString("vi-VN")}</TableCell>
                     <TableCell className="text-right tabular-nums">{row.orderCount.toLocaleString("vi-VN")}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {row.leadOrderCount.toLocaleString("vi-VN")}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {row.oldCustomerOrderCount.toLocaleString("vi-VN")}
+                    </TableCell>
                     <TableCell className="text-right">
                       <ConversionProgress value={row.conversionRate} />
                     </TableCell>
@@ -102,7 +91,7 @@ export function SubscriberOverview({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
+                  <TableCell colSpan={9} className="h-24 text-center">
                     Chưa có dữ liệu trong kỳ đã chọn
                   </TableCell>
                 </TableRow>

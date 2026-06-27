@@ -15,9 +15,9 @@ export function InvoiceForm({ orders }: { orders: InvoiceOrderOption[] }) {
     <div className="rounded-xl border bg-card p-4">
       <Tabs defaultValue="invoice" className="gap-4">
         <TabsList className="w-full">
-          <TabsTrigger value="invoice">Hoa don</TabsTrigger>
-          <TabsTrigger value="payment">Thanh toan</TabsTrigger>
-          <TabsTrigger value="business">Doanh nghiep</TabsTrigger>
+          <TabsTrigger value="invoice">Hóa đơn</TabsTrigger>
+          <TabsTrigger value="payment">Thanh toán</TabsTrigger>
+          <TabsTrigger value="business">Doanh nghiệp</TabsTrigger>
         </TabsList>
 
         <TabsContent value="invoice" className="flex flex-col gap-4">

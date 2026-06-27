@@ -1,16 +1,15 @@
 import "server-only";
 
-import { createHash } from "node:crypto";
-
 import { format } from "date-fns";
 import type { RowDataPacket } from "mysql2";
 
 import { getDbPool } from "@/lib/db";
 
 import type { UserDepartmentOption, UserRoleOption, UserRow, UsersLookups } from "./data";
+import { createHash } from "node:crypto";
 
 const ADMIN_ROLE_CODE = "ADMIN";
-const ADMIN_ROLE_NAME = "Toan quyen";
+const ADMIN_ROLE_NAME = "Toàn quyền";
 const ADMIN_STAFF_CODE = "ADMIN";
 const ADMIN_USERNAME = "admin";
 const ADMIN_EMAIL = "admin@fobtrans.com";
@@ -71,7 +70,7 @@ function toDate(value: Date | string | null) {
 
 function formatJoinedDate(value: Date | string | null) {
   const date = toDate(value) ?? new Date();
-  return format(date, "dd MMM yyyy, h:mm a");
+  return format(date, "dd/MM/yyyy, HH:mm");
 }
 
 function lastActiveMinutes(value: Date | string | null, isActive: number | boolean) {
@@ -84,9 +83,9 @@ function lastActiveMinutes(value: Date | string | null, isActive: number | boole
 }
 
 function mapStatus(row: UserQueryRow): UserRow["status"] {
-  if (!row.is_active) return "Deactivated";
-  if (row.staff_status === "inactive") return "Deactivated";
-  return "Active";
+  if (!row.is_active) return "Đã vô hiệu hóa";
+  if (row.staff_status === "inactive") return "Đã vô hiệu hóa";
+  return "Đang hoạt động";
 }
 
 async function ensureAdminRole() {
@@ -97,7 +96,7 @@ async function ensureAdminRole() {
       values (uuid(), ?, ?, ?)
       on duplicate key update role_name = values(role_name), description = values(description), updated_at = current_timestamp
     `,
-    [ADMIN_ROLE_CODE, ADMIN_ROLE_NAME, "Quyen quan tri toan bo he thong"],
+    [ADMIN_ROLE_CODE, ADMIN_ROLE_NAME, "Quyền quản trị toàn bộ hệ thống"],
   );
 
   const [rows] = await pool.query<IdRow[]>("select role_id as id from roles where role_code = ? limit 1", [
@@ -119,7 +118,7 @@ async function ensureAdminStaff() {
         set full_name = ?, role_title = ?, email = ?, status = 'active', updated_at = current_timestamp
         where staff_id = ?
       `,
-      ["Quan tri vien", ADMIN_ROLE_NAME, ADMIN_EMAIL, existing[0].id],
+      ["Quản trị viên", ADMIN_ROLE_NAME, ADMIN_EMAIL, existing[0].id],
     );
     return existing[0].id;
   }
@@ -130,7 +129,7 @@ async function ensureAdminStaff() {
       insert into staff (staff_id, staff_code, full_name, role_title, email, status)
       values (?, ?, ?, ?, ?, 'active')
     `,
-    [staffId, ADMIN_STAFF_CODE, "Quan tri vien", ADMIN_ROLE_NAME, ADMIN_EMAIL],
+    [staffId, ADMIN_STAFF_CODE, "Quản trị viên", ADMIN_ROLE_NAME, ADMIN_EMAIL],
   );
 
   return staffId;
@@ -224,8 +223,8 @@ export async function getUsersData(): Promise<UserRow[]> {
   );
 
   return rows.map((row) => {
-    const role = row.role_name ?? row.role_code ?? "Chua gan quyen";
-    const team = row.department_name ?? row.role_title ?? "He thong";
+    const role = row.role_name ?? row.role_code ?? "Chưa gán quyền";
+    const team = row.department_name ?? row.role_title ?? "Hệ thống";
     const workspace = [row.department_name ?? "Fobtrans ERP"];
 
     return {

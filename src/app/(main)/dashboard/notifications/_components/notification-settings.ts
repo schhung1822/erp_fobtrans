@@ -37,9 +37,9 @@ export const defaultNotificationSettings: NotificationSettings = {
   telegramBotToken: "",
   telegramChatId: "",
   orderTemplate:
-    "Don hang moi: {order_code}\nKhach hang: {customer_name}\nSDT: {phone}\nNguoi nhan: {receiver_name}\nTong tien: {total_charge_vnd}\nGhi chu: {note}",
+    "Đơn hàng mới: {order_code}\nKhách hàng: {customer_name}\nSĐT: {phone}\nNgười nhận: {receiver_name}\nTổng tiền: {total_charge_vnd}\nGhi chú: {note}",
   contactTemplate:
-    "Lien he moi: {contact_name}\nKhach hang: {customer_name}\nChuc danh: {title}\nSDT: {phone}\nEmail: {email}\nGhi chu: {note}",
+    "Liên hệ mới: {contact_name}\nKhách hàng: {customer_name}\nChức danh: {title}\nSĐT: {phone}\nEmail: {email}\nGhi chú: {note}",
 };
 
 export async function ensureNotificationSettingsTable() {
@@ -79,8 +79,8 @@ function fromRow(row: SettingsRow | undefined): NotificationSettings {
     larkWebhookUrl: row.lark_webhook_url ?? "",
     telegramBotToken: row.telegram_bot_token ?? "",
     telegramChatId: row.telegram_chat_id ?? "",
-    orderTemplate: row.order_template || defaultNotificationSettings.orderTemplate,
-    contactTemplate: row.contact_template || defaultNotificationSettings.contactTemplate,
+    orderTemplate: row.order_template ?? defaultNotificationSettings.orderTemplate,
+    contactTemplate: row.contact_template ?? defaultNotificationSettings.contactTemplate,
   };
 }
 
@@ -88,10 +88,9 @@ export async function getNotificationSettings() {
   await ensureNotificationSettingsTable();
 
   const pool = getDbPool();
-  const [rows] = await pool.query<SettingsRow[]>(
-    "select * from notification_settings where setting_id = ? limit 1",
-    ["default"],
-  );
+  const [rows] = await pool.query<SettingsRow[]>("select * from notification_settings where setting_id = ? limit 1", [
+    "default",
+  ]);
 
   return fromRow(rows[0]);
 }

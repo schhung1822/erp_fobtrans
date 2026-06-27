@@ -21,27 +21,27 @@ function formatVnd(value: number) {
 function SummaryCards({ summary }: { summary: CustomersSummary }) {
   const cards = [
     {
-      title: "Tong khach hang",
+      title: "Tổng khách hàng",
       value: summary.totalCustomers.toLocaleString("vi-VN"),
-      note: "So ho so trong bang customers",
+      note: "Số hồ sơ khách hàng",
       icon: UsersIcon,
     },
     {
       title: "Da phat sinh don",
       value: summary.customersWithOrders.toLocaleString("vi-VN"),
-      note: "Khach hang co it nhat 1 don",
+      note: "Khách hàng có ít nhất 1 đơn",
       icon: UserRoundCheckIcon,
     },
     {
       title: "Doanh thu",
       value: formatVnd(summary.totalRevenueVnd),
-      note: "Tong gia tri don theo khach hang",
+      note: "Tổng giá trị đơn theo khách hàng",
       icon: DatabaseIcon,
     },
     {
-      title: "Cong no",
+      title: "Công nợ",
       value: formatVnd(summary.totalReceivableVnd),
-      note: "So tien con phai thu",
+      note: "Số tiền cần phải thu",
       icon: AlertCircleIcon,
     },
   ];
@@ -77,10 +77,10 @@ export default async function Page() {
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div className="grid gap-1">
-          <h1 className="font-semibold text-2xl tracking-tight">Quan ly khach hang</h1>
+          <h1 className="font-semibold text-2xl tracking-tight">Quản lý khách hàng</h1>
         </div>
         <Badge variant="outline" className="w-fit">
-          customers: {summary.totalCustomers.toLocaleString("vi-VN")}
+          khách hàng: {summary.totalCustomers.toLocaleString("vi-VN")}
         </Badge>
       </div>
 

@@ -1,6 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-
-import { getDefaultDashboardData, getLatestDashboardMonth, type DashboardDateRange } from "./_components/data";
+import { type DashboardDateRange, getDefaultDashboardData, getLatestDashboardMonth } from "./_components/data";
 import { MetricCards } from "./_components/metric-cards";
 import { MonthFilter } from "./_components/month-filter";
 import { PerformanceOverview } from "./_components/performance-overview";
@@ -51,10 +49,6 @@ async function resolveMonthRange(searchParams: Record<string, string | string[] 
       toMonth: monthKey(to),
     } satisfies DashboardDateRange,
   };
-}
-
-function formatRangeLabel(fromMonth: string, toMonth: string) {
-  return fromMonth === toMonth ? fromMonth : `${fromMonth} - ${toMonth}`;
 }
 
 export default async function Page({

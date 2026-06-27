@@ -12,10 +12,10 @@ export default async function Page() {
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div className="grid gap-1">
-          <h1 className="font-semibold text-2xl tracking-tight">Quan ly kho & van hanh</h1>
+          <h1 className="font-semibold text-2xl tracking-tight">Quản lý kho & vận hành</h1>
         </div>
         <Badge variant="outline" className="w-fit">
-          warehouses: {warehouses.length.toLocaleString("vi-VN")}
+          Kho: {warehouses.length.toLocaleString("vi-VN")}
         </Badge>
       </div>
 

@@ -21,14 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -53,7 +46,14 @@ function TextField({
   return (
     <Field className="gap-1.5">
       <FieldLabel htmlFor={name}>{label}</FieldLabel>
-      <Input id={name} name={name} type={type} defaultValue={defaultValue ?? ""} placeholder={placeholder} required={required} />
+      <Input
+        id={name}
+        name={name}
+        type={type}
+        defaultValue={defaultValue ?? ""}
+        placeholder={placeholder}
+        required={required}
+      />
     </Field>
   );
 }
@@ -111,11 +111,11 @@ export function UserPanel({
     startTransition(async () => {
       try {
         await (isEditing ? updateUser(formData) : createUser(formData));
-        toast.success(isEditing ? "Da cap nhat nhan su." : "Da them nhan su.");
+        toast.success(isEditing ? "Đã cập nhật nhân sự." : "Đã thêm nhân sự.");
         onOpenChange(false);
         router.refresh();
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Khong the luu nhan su.");
+        toast.error(error instanceof Error ? error.message : "Không thể lưu nhân sự.");
       }
     });
   }
@@ -130,12 +130,12 @@ export function UserPanel({
     startTransition(async () => {
       try {
         await deleteUser(formData);
-        toast.success("Da xoa nhan su.");
+        toast.success("Đã xóa nhân sự.");
         setDeleteOpen(false);
         onOpenChange(false);
         router.refresh();
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Khong the xoa nhan su.");
+        toast.error(error instanceof Error ? error.message : "Không thể xóa nhân sự.");
       }
     });
   }
@@ -145,9 +145,9 @@ export function UserPanel({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="right" className="w-[min(92vw,460px)] overflow-y-auto sm:max-w-none">
           <SheetHeader className="border-b">
-            <SheetTitle>{isEditing ? user?.name : "Them nhan su"}</SheetTitle>
+            <SheetTitle>{isEditing ? user?.name : "Thêm nhân sự"}</SheetTitle>
             <SheetDescription>
-              {isEditing ? "Xem va chinh sua thong tin tai khoan nhan su." : "Tao tai khoan va ho so nhan su moi."}
+              {isEditing ? "Xem và chỉnh sửa thông tin tài khoản nhân sự." : "Tạo tài khoản và hồ sơ nhân sự mới."}
             </SheetDescription>
           </SheetHeader>
 
@@ -157,31 +157,47 @@ export function UserPanel({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <TextField label="Ho ten" name="name" defaultValue={user?.name} required />
+                <TextField label="Họ tên" name="name" defaultValue={user?.name} required />
               </div>
-              <TextField label="Ten dang nhap" name="username" defaultValue={user?.username} required />
-              <TextField label="Email" name="email" type="email" defaultValue={user?.email} placeholder="name@company.com" />
-              {!isEditing ? (
-                <TextField label="Ma nhan su" name="staffCode" defaultValue={user?.username?.toUpperCase()} placeholder="Tu lay theo username" />
-              ) : null}
-              <TextField label="So dien thoai" name="phone" defaultValue={user?.phone} placeholder="090..." />
-              <TextField label="Chuc danh" name="roleTitle" defaultValue={user?.roleTitle} placeholder="Ke toan, van hanh..." />
+              <TextField label="Tên đăng nhập" name="username" defaultValue={user?.username} required />
               <TextField
-                label={isEditing ? "Mat khau moi" : "Mat khau"}
+                label="Email"
+                name="email"
+                type="email"
+                defaultValue={user?.email}
+                placeholder="name@company.com"
+              />
+              {!isEditing ? (
+                <TextField
+                  label="Mã nhân sự"
+                  name="staffCode"
+                  defaultValue={user?.username?.toUpperCase()}
+                  placeholder="Tự lấy theo tên đăng nhập"
+                />
+              ) : null}
+              <TextField label="Số điện thoại" name="phone" defaultValue={user?.phone} placeholder="090..." />
+              <TextField
+                label="Chức danh"
+                name="roleTitle"
+                defaultValue={user?.roleTitle}
+                placeholder="Kế toán, vận hành..."
+              />
+              <TextField
+                label={isEditing ? "Mật khẩu mới" : "Mật khẩu"}
                 name="password"
                 type="password"
-                placeholder={isEditing ? "De trong neu khong doi" : "Tuy chon"}
+                placeholder={isEditing ? "Để trống nếu không đổi" : "Tùy chọn"}
               />
-              <SelectField label="Vai tro" name="roleId" defaultValue={user?.roleId}>
-                <SelectItem value="none">Chua gan quyen</SelectItem>
+              <SelectField label="Vai trò" name="roleId" defaultValue={user?.roleId}>
+                <SelectItem value="none">Chưa gán quyền</SelectItem>
                 {lookups.roles.map((role) => (
                   <SelectItem key={role.id} value={role.id}>
                     {role.name} ({role.code})
                   </SelectItem>
                 ))}
               </SelectField>
-              <SelectField label="Phong ban" name="departmentId" defaultValue={user?.departmentId}>
-                <SelectItem value="none">Chua gan phong ban</SelectItem>
+              <SelectField label="Phòng ban" name="departmentId" defaultValue={user?.departmentId}>
+                <SelectItem value="none">Chưa gán phòng ban</SelectItem>
                 {lookups.departments.map((department) => (
                   <SelectItem key={department.id} value={department.id}>
                     {department.name}
@@ -190,13 +206,15 @@ export function UserPanel({
               </SelectField>
               <div className="flex items-center justify-between rounded-lg border bg-muted/20 p-3 sm:col-span-2">
                 <div className="grid gap-0.5">
-                  <div className="font-medium text-sm">Tai khoan dang hoat dong</div>
-                  <div className="text-muted-foreground text-xs">Tat de vo hieu hoa dang nhap va an trang thai active.</div>
+                  <div className="font-medium text-sm">Tài khoản đang hoạt động</div>
+                  <div className="text-muted-foreground text-xs">
+                    Tắt để vô hiệu hóa đăng nhập và chuyển sang trạng thái không hoạt động.
+                  </div>
                 </div>
                 <Switch checked={isActive} onCheckedChange={setIsActive} />
               </div>
               <Field className="gap-1.5 sm:col-span-2">
-                <FieldLabel htmlFor="note">Ghi chu</FieldLabel>
+                <FieldLabel htmlFor="note">Ghi chú</FieldLabel>
                 <Textarea id="note" name="note" defaultValue={user?.note ?? ""} rows={4} />
               </Field>
             </div>
@@ -211,11 +229,11 @@ export function UserPanel({
                   disabled={!isEditing || isPending}
                 >
                   <Trash2Icon />
-                  Xoa
+                  Xóa
                 </Button>
                 <Button type="submit" disabled={isPending}>
                   {isEditing ? <SaveIcon /> : <UserPlusIcon />}
-                  {isPending ? "Dang luu..." : isEditing ? "Luu thay doi" : "Them nhan su"}
+                  {isPending ? "Đang lưu..." : isEditing ? "Lưu thay đổi" : "Thêm nhân sự"}
                 </Button>
               </div>
             </SheetFooter>
@@ -226,15 +244,16 @@ export function UserPanel({
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Xoa nhan su?</AlertDialogTitle>
+            <AlertDialogTitle>Xóa nhân sự?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tai khoan "{user?.username}" se bi xoa. Ho so nhan su se bi xoa neu chua co rang buoc du lieu, neu khong se chuyen sang inactive.
+              Tài khoản "{user?.username}" sẽ bị xóa. Hồ sơ nhân sự sẽ bị xóa nếu chưa có ràng buộc dữ liệu; nếu không,
+              tài khoản sẽ chuyển sang trạng thái không hoạt động.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Huy</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>Hủy</AlertDialogCancel>
             <AlertDialogAction type="button" variant="destructive" onClick={handleDelete} disabled={isPending}>
-              Xoa
+              Xóa
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

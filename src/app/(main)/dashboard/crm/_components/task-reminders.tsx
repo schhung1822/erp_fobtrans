@@ -1,101 +1,128 @@
-import { CalendarDays, CalendarRange } from "lucide-react";
+﻿import { AlertTriangle, CheckCircle2, Info, UsersRound } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { cn, formatCurrency } from "@/lib/utils";
 
-const proposalSent = 12;
-const proposalGoal = 18;
-const proposalProgressPercentage = Math.round((proposalSent / proposalGoal) * 100);
-const proposalGoalBarCount = 42;
-const activeProposalBars = Math.round((proposalSent / proposalGoal) * proposalGoalBarCount);
+import type { CrmAlert, CrmStaffReport } from "./data";
 
-const proposalGoalBars = Array.from({ length: proposalGoalBarCount }, (_, index) => ({
-  id: `proposal-goal-${index + 1}`,
-  active: index < activeProposalBars,
-}));
+function formatVnd(value: number) {
+  return formatCurrency(value, {
+    currency: "VND",
+    locale: "vi-VN",
+    noDecimals: true,
+  });
+}
 
-export function TaskReminders() {
+function formatPercent(value: number) {
+  return new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 1,
+    style: "percent",
+  }).format(value);
+}
+
+function AlertIcon({ tone }: { tone: CrmAlert["tone"] }) {
+  if (tone === "warning") return <AlertTriangle className="size-4" />;
+  if (tone === "success") return <CheckCircle2 className="size-4" />;
+  return <Info className="size-4" />;
+}
+
+export function TaskReminders({ alerts, staffReports }: { alerts: CrmAlert[]; staffReports: CrmStaffReport[] }) {
   return (
     <section className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-      <Card className="xl:col-span-8">
+      <Card className="xl:col-span-4">
         <CardHeader>
-          <CardTitle>Upcoming Meetings</CardTitle>
-          <CardAction>
-            <Button variant="outline" size="sm">
-              <CalendarDays data-icon="inline-start" />
-              View Calendar
-            </Button>
-          </CardAction>
+          <CardTitle>Cảnh báo chăm sóc lead</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-muted-foreground text-xs tabular-nums">
-              <div className="flex flex-col items-center gap-1">
-                <span>08:45</span>
-                <span className="h-2 w-px bg-border" />
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span>09:00</span>
-                <span className="h-2 w-px bg-border" />
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span>10:00</span>
-                <span className="h-2 w-px bg-border" />
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span>10:20</span>
-                <span className="h-2 w-px bg-border" />
-              </div>
-            </div>
-
-            <div className="relative h-14">
-              <div className="absolute inset-x-3 top-1/2 h-px -translate-y-1/2 bg-border/80" />
-              <div className="absolute top-2 bottom-2 left-[22%] flex w-[44%] items-center rounded-lg bg-primary px-2 text-primary-foreground shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-7 items-center justify-center rounded-full bg-background text-primary">
-                    <CalendarRange className="size-3.5" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="truncate font-medium text-primary-foreground text-xs leading-none">
-                      Product demo with Tim
-                    </div>
-                    <div className="truncate text-[10px] text-primary-foreground/75">Weblabs Studio</div>
-                  </div>
+        <CardContent className="grid gap-3">
+          {alerts.map((alert) => (
+            <div key={alert.id} className="flex items-start gap-3 rounded-lg border p-3">
+              <span
+                className={cn(
+                  "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border",
+                  alert.tone === "warning" && "border-amber-500/25 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+                  alert.tone === "info" && "border-sky-500/25 bg-sky-500/10 text-sky-700 dark:text-sky-300",
+                  alert.tone === "success" &&
+                    "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+                )}
+              >
+                <AlertIcon tone={alert.tone} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="font-medium text-sm">{alert.title}</div>
+                  <div className="font-semibold tabular-nums">{alert.count.toLocaleString("vi-VN")}</div>
                 </div>
+                <p className="mt-1 text-muted-foreground text-xs leading-relaxed">{alert.description}</p>
               </div>
-              <div className="absolute top-4 bottom-4 left-[64%] w-1 rounded-full bg-background/90" />
             </div>
-          </div>
+          ))}
         </CardContent>
       </Card>
 
-      <Card className="xl:col-span-4">
+      <Card className="xl:col-span-8">
         <CardHeader>
-          <CardTitle>Monthly Proposal Goal</CardTitle>
+          <CardTitle>Hiệu suất nhân sự phụ trách</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col gap-1">
-          <div className="flex items-end justify-between gap-3">
-            <div className="font-medium text-2xl tabular-nums leading-none">
-              {proposalSent} <span className="font-normal text-base text-muted-foreground">sent</span>
-            </div>
-            <div className="text-muted-foreground text-sm tabular-nums">{proposalGoal} target</div>
+        <CardContent className="pt-0">
+          <div className="overflow-hidden rounded-lg border bg-card">
+            <Table>
+              <TableHeader className="bg-muted/40">
+                <TableRow>
+                  <TableHead className="h-11">Nhân sự</TableHead>
+                  <TableHead className="h-11 text-right">Lead</TableHead>
+                  <TableHead className="h-11 text-right">Tiềm năng</TableHead>
+                  <TableHead className="h-11 text-right">Đơn theo lead</TableHead>
+                  <TableHead className="h-11 text-right">Chuyển đổi</TableHead>
+                  <TableHead className="h-11 text-right">Doanh thu</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {staffReports.length ? (
+                  staffReports.map((row) => (
+                    <TableRow key={row.staffId}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <span className="flex size-8 items-center justify-center rounded-md border bg-muted">
+                            <UsersRound className="size-4 text-muted-foreground" />
+                          </span>
+                          <div className="grid gap-0.5">
+                            <span className="font-medium">{row.staffName}</span>
+                            <span className="text-muted-foreground text-xs">
+                              {row.staffCode ?? "Chưa có mã nhân sự"}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{row.leadCount.toLocaleString("vi-VN")}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {row.potentialLeadCount.toLocaleString("vi-VN")}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {row.leadOrderCount.toLocaleString("vi-VN")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="ml-auto grid w-28 gap-1.5">
+                          <div className="text-right font-medium text-xs tabular-nums">
+                            {formatPercent(row.conversionRate)}
+                          </div>
+                          <Progress value={Math.min(row.conversionRate * 100, 100)} className="h-2" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{formatVnd(row.revenueVnd)}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      Chưa có dữ liệu nhân sự phụ trách
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
-          <div className="flex h-10 w-full items-end gap-0.5">
-            {proposalGoalBars.map((bar) => (
-              <div key={bar.id} className="flex flex-1 justify-center">
-                <div
-                  className={cn(
-                    "h-10 w-1.5 rounded-full",
-                    bar.active ? "bg-muted-foreground/75" : "bg-muted-foreground/25",
-                  )}
-                />
-              </div>
-            ))}
-          </div>
-          <p className="text-muted-foreground text-sm">
-            {proposalProgressPercentage}% of this month&apos;s proposal target reached.
-          </p>
         </CardContent>
       </Card>
     </section>

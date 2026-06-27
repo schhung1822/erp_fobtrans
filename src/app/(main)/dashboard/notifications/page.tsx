@@ -12,18 +12,19 @@ export default async function Page() {
 
   const cards = [
     {
-      title: "Su kien",
-      value: [settings.orderEnabled && "Don hang", settings.contactEnabled && "Lien he"].filter(Boolean).join(", ") || "Tat",
+      title: "Sự kiện",
+      value:
+        [settings.orderEnabled && "Đơn hàng", settings.contactEnabled && "Liên hệ"].filter(Boolean).join(", ") || "Tắt",
       icon: BellRingIcon,
     },
     {
       title: "Lark",
-      value: settings.larkEnabled ? "Dang bat" : "Dang tat",
+      value: settings.larkEnabled ? "Đang bật" : "Đang tắt",
       icon: MessageCircleIcon,
     },
     {
       title: "Telegram",
-      value: settings.telegramEnabled ? "Dang bat" : "Dang tat",
+      value: settings.telegramEnabled ? "Đang bật" : "Đang tắt",
       icon: SendIcon,
     },
   ];
@@ -31,9 +32,9 @@ export default async function Page() {
   return (
     <div className="@container/main flex flex-col gap-4 md:gap-6">
       <div className="flex flex-col gap-1">
-        <h1 className="font-semibold text-2xl tracking-tight">Quan ly thong bao</h1>
+        <h1 className="font-semibold text-2xl tracking-tight">Quản lý thông báo</h1>
         <p className="text-muted-foreground text-sm">
-          Cau hinh mau thong bao don hang va lien he moi gui ve Lark Messenger hoac Telegram group.
+          Cấu hình mẫu thông báo đơn hàng và liên hệ mới gửi đến nhóm Lark Messenger hoặc Telegram.
         </p>
       </div>
 

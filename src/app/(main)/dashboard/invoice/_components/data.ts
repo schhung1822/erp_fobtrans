@@ -59,7 +59,7 @@ const today = new Date();
 
 export const defaultInvoiceValues: InvoiceFormValues = {
   orderId: "",
-  invoiceTitle: "Hoa don",
+  invoiceTitle: "Hóa đơn",
   referenceNumber: `INV-${format(today, "yyMMdd")}`,
   issuedDate: format(today, "yyyy-MM-dd"),
   paymentDueDate: format(addDays(today, 7), "yyyy-MM-dd"),
@@ -71,14 +71,14 @@ export const defaultInvoiceValues: InvoiceFormValues = {
     website: "",
     addressLines: [],
     taxId: "",
-    paymentAccountName: "Tai khoan thanh toan",
+    paymentAccountName: "Tài khoản thanh toán",
     paymentBankName: "",
     routingNumber: "",
     issuerName: "Fobtrans",
   },
   to: {
     id: "",
-    name: "Chon don hang de lay khach hang",
+    name: "Chọn đơn hàng để lấy khách hàng",
     email: "",
     addressLines: [],
     taxId: "",
@@ -89,7 +89,7 @@ export const defaultInvoiceValues: InvoiceFormValues = {
   items: [
     {
       id: "service-fee",
-      description: "Phi dich vu van chuyen",
+      description: "Phí dịch vụ vận chuyển",
       quantity: 1,
       unitPrice: 0,
     },
@@ -109,7 +109,7 @@ export const invoiceTaxOptions: InvoiceTaxOption[] = [
   },
   {
     id: "none",
-    name: "Khong tinh thue",
+    name: "Không tính thuế",
     rate: 0,
   },
 ];

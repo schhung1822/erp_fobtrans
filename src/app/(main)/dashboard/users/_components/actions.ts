@@ -1,12 +1,12 @@
 "use server";
 
-import { createHash } from "node:crypto";
-
 import { revalidatePath } from "next/cache";
 
 import type { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 
 import { getDbPool } from "@/lib/db";
+
+import { createHash } from "node:crypto";
 
 interface IdRow extends RowDataPacket {
   id: string;
@@ -55,9 +55,9 @@ export async function createUser(formData: FormData) {
   const name = text(formData, "name");
   const email = text(formData, "email");
 
-  if (!username) throw new Error("Vui long nhap ten dang nhap.");
-  if (!name) throw new Error("Vui long nhap ten nhan su.");
-  if (await usernameExists(username)) throw new Error("Ten dang nhap da ton tai.");
+  if (!username) throw new Error("Vui lòng nhập tên đăng nhập.");
+  if (!name) throw new Error("Vui lòng nhập tên nhân sự.");
+  if (await usernameExists(username)) throw new Error("Tên đăng nhập đã tồn tại.");
 
   const pool = getDbPool();
   const staffId = await makeUuid();
@@ -102,11 +102,11 @@ export async function updateUser(formData: FormData) {
   const name = text(formData, "name");
   const email = text(formData, "email");
 
-  if (!userId) throw new Error("Thieu user_id de cap nhat.");
-  if (!staffId) throw new Error("Thieu staff_id de cap nhat.");
-  if (!username) throw new Error("Vui long nhap ten dang nhap.");
-  if (!name) throw new Error("Vui long nhap ten nhan su.");
-  if (await usernameExists(username, userId)) throw new Error("Ten dang nhap da ton tai.");
+  if (!userId) throw new Error("Thiếu user_id để cập nhật.");
+  if (!staffId) throw new Error("Thiếu staff_id để cập nhật.");
+  if (!username) throw new Error("Vui lòng nhập tên đăng nhập.");
+  if (!name) throw new Error("Vui lòng nhập tên nhân sự.");
+  if (await usernameExists(username, userId)) throw new Error("Tên đăng nhập đã tồn tại.");
 
   const pool = getDbPool();
   const isActive = active(formData);
@@ -153,7 +153,7 @@ export async function updateUser(formData: FormData) {
     [text(formData, "roleId"), username, email, isActive ? 1 : 0, password ? passwordHash(password) : null, userId],
   );
 
-  if (result.affectedRows === 0) throw new Error("Khong tim thay user de cap nhat.");
+  if (result.affectedRows === 0) throw new Error("Không tìm thấy người dùng để cập nhật.");
 
   revalidateUsers();
 }
@@ -162,19 +162,19 @@ export async function deleteUser(formData: FormData) {
   const userId = text(formData, "userId");
   const staffId = text(formData, "staffId");
 
-  if (!userId) throw new Error("Thieu user_id de xoa.");
+  if (!userId) throw new Error("Thiếu user_id để xóa.");
 
   const pool = getDbPool();
   const [result] = await pool.query<ResultSetHeader>("delete from users where user_id = ?", [userId]);
 
-  if (result.affectedRows === 0) throw new Error("Khong tim thay user de xoa.");
+  if (result.affectedRows === 0) throw new Error("Không tìm thấy người dùng để xóa.");
 
   if (staffId) {
-    await pool
-      .query("delete from staff where staff_id = ?", [staffId])
-      .catch(async () => {
-        await pool.query("update staff set status = 'inactive', updated_at = current_timestamp where staff_id = ?", [staffId]);
-      });
+    await pool.query("delete from staff where staff_id = ?", [staffId]).catch(async () => {
+      await pool.query("update staff set status = 'inactive', updated_at = current_timestamp where staff_id = ?", [
+        staffId,
+      ]);
+    });
   }
 
   revalidateUsers();

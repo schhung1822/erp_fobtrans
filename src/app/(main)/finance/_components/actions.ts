@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 
@@ -65,13 +65,22 @@ function toNumber(value: number | string | null | undefined) {
 }
 
 async function makeUuid(conn: PoolConnection) {
-  const [rows] = await conn.query<IdRow[]>("select uuid() as id");
+  const [rows] = await conn.query<IdRow[]>(
+    "select cast(uuid() as char(36) charset utf8mb4) collate utf8mb4_unicode_ci as id",
+  );
   return rows[0].id;
 }
 
 async function upsertCost(conn: PoolConnection, orderId: string, costType: CostType, amountVnd: number) {
   const [existing] = await conn.query<IdRow[]>(
-    "select cost_id as id from order_costs where order_id = ? and cost_type = ? order by created_at asc limit 1",
+    `
+      select cost_id as id
+      from order_costs
+      where order_id = cast(? as char(36) charset utf8mb4) collate utf8mb4_unicode_ci
+        and cost_type = cast(? as char charset utf8mb4) collate utf8mb4_unicode_ci
+      order by created_at asc
+      limit 1
+    `,
     [orderId, costType],
   );
   const costId = existing[0]?.id;
@@ -105,7 +114,14 @@ async function upsertCost(conn: PoolConnection, orderId: string, costType: CostT
 
 async function upsertCharge(conn: PoolConnection, orderId: string, chargeType: ChargeType, amountVnd: number) {
   const [existing] = await conn.query<IdRow[]>(
-    "select charge_id as id from order_charges where order_id = ? and charge_type = ? order by created_at asc limit 1",
+    `
+      select charge_id as id
+      from order_charges
+      where order_id = cast(? as char(36) charset utf8mb4) collate utf8mb4_unicode_ci
+        and charge_type = cast(? as char charset utf8mb4) collate utf8mb4_unicode_ci
+      order by created_at asc
+      limit 1
+    `,
     [orderId, chargeType],
   );
   const chargeId = existing[0]?.id;
@@ -204,7 +220,7 @@ async function recalculateOrder(
           r.remaining_amount_vnd = ?,
           r.due_date = o.payment_due_date,
           r.status = ?,
-          r.overdue_days = greatest(datediff(curdate(), o.payment_due_date), 0),
+          r.overdue_days = coalesce(greatest(datediff(curdate(), o.payment_due_date), 0), 0),
           r.updated_at = current_timestamp
         where r.order_id = ?
       `,
@@ -221,7 +237,7 @@ async function recalculateOrder(
         remaining_amount_vnd, due_date, status, overdue_days
       )
       select uuid(), order_id, customer_id, ?, ?, ?, payment_due_date, ?,
-        greatest(datediff(curdate(), payment_due_date), 0)
+        coalesce(greatest(datediff(curdate(), payment_due_date), 0), 0)
       from orders
       where order_id = ?
     `,
@@ -237,6 +253,7 @@ export async function updateFinanceEntry(formData: FormData) {
   const conn = await pool.getConnection();
 
   try {
+    await conn.query("set names utf8mb4 collate utf8mb4_unicode_ci");
     await conn.beginTransaction();
 
     await upsertCost(conn, orderId, "china_domestic", money(formData, "chinaDomesticCostVnd"));

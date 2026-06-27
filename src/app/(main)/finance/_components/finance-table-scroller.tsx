@@ -90,7 +90,7 @@ export function FinanceTableScroller({ children, className }: { children: React.
     <div className={cn("grid gap-2", className)}>
       <section
         ref={tableScrollRef}
-        aria-label="Bang ke toan theo doi"
+        aria-label="Bảng kế toán theo dõi"
         className="relative max-h-[72vh] overflow-y-auto overflow-x-hidden rounded-t-lg border border-b-0 [&_[data-slot=table-container]]:overflow-visible"
         onKeyDown={handleKeyDown}
         onScroll={() => syncScroll("table")}

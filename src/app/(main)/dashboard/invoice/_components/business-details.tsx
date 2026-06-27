@@ -1,5 +1,7 @@
 import { useRef, useTransition } from "react";
 
+import Image from "next/image";
+
 import { ImageUpIcon } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 
@@ -60,13 +62,20 @@ function LogoUploadField() {
       <div className="flex items-center gap-3 rounded-lg border bg-muted/20 p-2">
         <div className="flex h-12 w-24 shrink-0 items-center justify-center rounded-md border bg-background">
           {logoUrl ? (
-            <img src={logoUrl} alt="Logo" className="max-h-10 max-w-20 object-contain" />
+            <Image
+              src={logoUrl}
+              alt="Logo"
+              width={80}
+              height={40}
+              unoptimized
+              className="max-h-10 max-w-20 object-contain"
+            />
           ) : (
             <ImageUpIcon className="size-5 text-muted-foreground" />
           )}
         </div>
         <div className="grid min-w-0 flex-1 gap-1">
-          <div className="truncate text-muted-foreground text-xs">{logoUrl || "Chua co logo"}</div>
+          <div className="truncate text-muted-foreground text-xs">{logoUrl || "Chưa có logo"}</div>
           <Button
             type="button"
             variant="outline"
@@ -75,7 +84,7 @@ function LogoUploadField() {
             disabled={isPending}
           >
             <ImageUpIcon />
-            {isPending ? "Dang tai..." : "Tai logo"}
+            {isPending ? "Đang tải..." : "Tải logo lên"}
           </Button>
         </div>
       </div>
@@ -89,26 +98,26 @@ export function BusinessDetails() {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="font-medium tracking-tight">Thong tin doanh nghiep</h2>
+        <h2 className="font-medium tracking-tight">Thông tin doanh nghiệp</h2>
         <SaveInvoiceSettingsButton scope="business" />
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="invoice-title">
-            Tieu de tren hoa don
+            Tiêu đề trên hóa đơn
           </FieldLabel>
           <Input id="invoice-title" {...register("invoiceTitle")} />
         </Field>
         <LogoUploadField />
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-name">
-            Ten doanh nghiep
+            Tên doanh nghiệp
           </FieldLabel>
           <Input id="business-name" {...register("from.name")} />
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-tax-id">
-            Ma so thue
+            Mã số thuế
           </FieldLabel>
           <Input id="business-tax-id" {...register("from.taxId")} />
         </Field>
@@ -120,7 +129,7 @@ export function BusinessDetails() {
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-phone">
-            So dien thoai
+            Số điện thoại
           </FieldLabel>
           <Input id="business-phone" {...register("from.phone")} />
         </Field>
@@ -132,7 +141,7 @@ export function BusinessDetails() {
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="business-issuer-name">
-            Nguoi lap
+            Người lập
           </FieldLabel>
           <Input id="business-issuer-name" {...register("from.issuerName")} />
         </Field>
@@ -142,7 +151,7 @@ export function BusinessDetails() {
           render={({ field }) => (
             <Field className="gap-1 md:col-span-2">
               <FieldLabel className="text-xs" htmlFor="business-address">
-                Dia chi doanh nghiep
+                Địa chỉ doanh nghiệp
               </FieldLabel>
               <Textarea
                 id="business-address"

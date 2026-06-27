@@ -49,11 +49,11 @@ import type { OperationWarehouseRow } from "./schema";
 import { WarehouseFormDialog } from "./warehouse-form";
 
 const sortOptions = [
-  { value: "updated-desc", label: "Moi cap nhat" },
-  { value: "active-desc", label: "Nhieu don dang xu ly" },
-  { value: "orders-desc", label: "Nhieu don nhat" },
-  { value: "goods-desc", label: "Nhieu kien nhat" },
-  { value: "name-asc", label: "Ten A-Z" },
+  { value: "updated-desc", label: "Mới cập nhật" },
+  { value: "active-desc", label: "Nhiều đơn xử lý" },
+  { value: "orders-desc", label: "Nhiều đơn nhất" },
+  { value: "goods-desc", label: "Nhiều kiện nhất" },
+  { value: "name-asc", label: "Tên A-Z" },
 ] as const;
 
 type OperationsView = "all" | "active" | "inactive";
@@ -150,17 +150,17 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
           <TabsList className="**:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1">
             <TabsTrigger value="all">Tat ca</TabsTrigger>
             <TabsTrigger value="active">
-              Hoat dong <Badge variant="secondary">{activeCount}</Badge>
+              Hoạt động <Badge variant="secondary">{activeCount}</Badge>
             </TabsTrigger>
             <TabsTrigger value="inactive">
-              Tam dung <Badge variant="secondary">{inactiveCount}</Badge>
+              Tạm dừng <Badge variant="secondary">{inactiveCount}</Badge>
             </TabsTrigger>
           </TabsList>
           <div className="relative w-full lg:w-80">
             <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               className="h-8 rounded-[min(var(--radius-md),12px)] pl-8"
-              placeholder="Tim ma kho, ten kho, dia chi..."
+              placeholder="Tìm mã kho, tên kho, địa chỉ..."
               value={searchQuery}
               onChange={(event) => {
                 table.getColumn("search")?.setFilterValue(event.target.value || undefined);
@@ -174,7 +174,7 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <ArrowUpDown />
-                Sap xep
+                Sắp xếp
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -194,12 +194,12 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <Settings2 data-icon="inline-start" />
-                Cot
+                Kiểu xem
                 <ChevronDownIcon data-icon="inline-end" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuLabel>Hien thi cot</DropdownMenuLabel>
+              <DropdownMenuLabel>Hiển thị cột</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {table
                 .getAllColumns()
@@ -247,7 +247,7 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
               ) : (
                 <TableRow>
                   <TableCell colSpan={table.getVisibleLeafColumns().length} className="h-28 text-center">
-                    Chua co kho phu hop.
+                    Chưa chọn kho phù hợp.
                   </TableCell>
                 </TableRow>
               )}
@@ -256,12 +256,12 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="hidden flex-1 text-muted-foreground text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} kho duoc chon.
+            {table.getFilteredSelectedRowModel().rows.length} / {table.getFilteredRowModel().rows.length} kho được chọn.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="operations-rows-per-page" className="font-medium text-sm">
-                Dong moi trang
+                Dòng mỗi trang
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -291,7 +291,7 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">Trang dau</span>
+                <span className="sr-only">Trang đầu</span>
                 <ChevronsLeftIcon />
               </Button>
               <Button
@@ -301,7 +301,7 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
-                <span className="sr-only">Trang truoc</span>
+                <span className="sr-only">Trang trước</span>
                 <ChevronLeftIcon />
               </Button>
               <Button
@@ -321,7 +321,7 @@ export function OperationsTable({ data }: { data: OperationWarehouseRow[] }) {
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
-                <span className="sr-only">Trang cuoi</span>
+                <span className="sr-only">Trang cuối</span>
                 <ChevronsRightIcon />
               </Button>
             </div>

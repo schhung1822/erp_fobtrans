@@ -81,9 +81,9 @@ function TextAreaField({
 
 function CustomerStats({ customer }: { customer: CustomerRow }) {
   const stats = [
-    { label: "So don", value: `${customer.orderCount.toLocaleString("vi-VN")} don` },
+    { label: "Số đơn", value: `${customer.orderCount.toLocaleString("vi-VN")} đơn` },
     { label: "Doanh thu", value: formatVnd(customer.totalRevenueVnd) },
-    { label: "Cong no", value: formatVnd(customer.totalReceivableVnd) },
+    { label: "Công nợ", value: formatVnd(customer.totalReceivableVnd) },
   ];
 
   return (
@@ -114,23 +114,23 @@ export function CustomerFormDialog({
       <DialogTrigger asChild>
         {triggerVariant === "link" ? (
           <Button variant="link" className="h-auto min-w-0 justify-start p-0 text-left font-medium text-foreground">
-            <span className="truncate">{triggerLabel ?? customer?.name ?? "Sua khach hang"}</span>
+            <span className="truncate">{triggerLabel ?? customer?.name ?? "Sửa khách hàng"}</span>
           </Button>
         ) : isEditing ? (
           <Button variant="ghost" className="w-full justify-start px-2" size="sm">
             <PencilIcon />
-            {triggerLabel ?? "Sua khach hang"}
+            {triggerLabel ?? "Sửa khách hàng"}
           </Button>
         ) : (
           <Button size="sm">
             <PlusIcon />
-            Them khach hang
+            Thêm khách hàng
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="max-h-[min(760px,90vh)] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Cap nhat khach hang" : "Them khach hang"}</DialogTitle>
+          <DialogTitle>{isEditing ? "Cập nhật khách hàng" : "Thêm khách hàng"}</DialogTitle>
         </DialogHeader>
 
         <form action={isEditing ? updateCustomer : createCustomer} className="grid gap-5">
@@ -138,25 +138,25 @@ export function CustomerFormDialog({
           {customer ? <CustomerStats customer={customer} /> : null}
           <div className="grid gap-4 md:grid-cols-2">
             <TextField
-              label="Ma khach hang"
+              label="Mã khách hàng"
               name="code"
               defaultValue={customer?.code}
-              placeholder="Tu tao neu de trong"
+              placeholder="Tự tạo nếu để trống"
             />
-            <TextField label="So dien thoai" name="phone" defaultValue={customer?.phone} placeholder="090..." />
+            <TextField label="Số điện thoại" name="phone" defaultValue={customer?.phone} placeholder="090..." />
             <TextField
-              label="Ma so thue"
+              label="Mã số thuế"
               name="taxCode"
               defaultValue={customer?.taxCode}
               placeholder="MST / tax code"
             />
             <div className="md:col-span-2">
-              <TextField label="Ten khach hang" name="name" defaultValue={customer?.name} required />
+              <TextField label="Tên khách hàng" name="name" defaultValue={customer?.name} required />
             </div>
-            <TextAreaField label="Dia chi giao hang" name="deliveryAddress" defaultValue={customer?.deliveryAddress} />
-            <TextAreaField label="Dia chi hoa don" name="billingAddress" defaultValue={customer?.billingAddress} />
+            <TextAreaField label="Địa chỉ giao hàng" name="deliveryAddress" defaultValue={customer?.deliveryAddress} />
+            <TextAreaField label="Địa chỉ hóa đơn" name="billingAddress" defaultValue={customer?.billingAddress} />
             <div className="md:col-span-2">
-              <TextAreaField label="Ghi chu" name="note" defaultValue={customer?.note} placeholder="Ghi chu noi bo" />
+              <TextAreaField label="Ghi chu" name="note" defaultValue={customer?.note} placeholder="Ghi chú nội bộ" />
             </div>
           </div>
 
@@ -164,12 +164,12 @@ export function CustomerFormDialog({
             <DialogClose asChild>
               <Button variant="outline" type="button">
                 <XIcon />
-                Huy
+                Hủy
               </Button>
             </DialogClose>
             <Button type="submit">
               <SaveIcon />
-              {isEditing ? "Luu thay doi" : "Them khach hang"}
+              {isEditing ? "Lưu thay đổi" : "Thêm khách hàng"}
             </Button>
           </DialogFooter>
         </form>
@@ -184,14 +184,14 @@ export function DeleteCustomerDialog({ customer }: { customer: CustomerRow }) {
       <AlertDialogTrigger asChild>
         <Button variant="ghost" className="w-full justify-start px-2 text-destructive" size="sm">
           <Trash2Icon />
-          Xoa khach hang
+          Xóa khách hàng
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Xoa khach hang?</AlertDialogTitle>
+          <AlertDialogTitle>Xóa khách hàng?</AlertDialogTitle>
           <AlertDialogDescription>
-            Khach hang "{customer.name}" se bi xoa neu chua co rang buoc don hang trong he thong.
+            Khách hàng "{customer.name}" sẽ bị xóa nếu chưa có ràng buộc đơn hàng trong hệ thống
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -199,7 +199,7 @@ export function DeleteCustomerDialog({ customer }: { customer: CustomerRow }) {
           <form action={deleteCustomer}>
             <input type="hidden" name="customerId" value={customer.id} />
             <AlertDialogAction type="submit" variant="destructive">
-              Xoa
+              Xóa
             </AlertDialogAction>
           </form>
         </AlertDialogFooter>

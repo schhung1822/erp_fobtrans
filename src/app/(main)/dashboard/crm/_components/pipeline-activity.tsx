@@ -1,149 +1,154 @@
-"use client";
+﻿"use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, Line, XAxis, YAxis } from "recharts";
 
-import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatCurrency } from "@/lib/utils";
 
-const pipelineChartValues = [34, 38, 31, 47, 42, 51, 44, 40, 58, 46, 43, 49] as const;
+import type { CrmMonthlyFlow, CrmSummary } from "./data";
 
-const pipelineChartConfig = {
-  qualified: {
-    label: "Qualified",
+const chartConfig = {
+  leads: {
+    label: "Lead mới",
+    color: "var(--chart-1)",
+  },
+  leadOrders: {
+    label: "Đơn theo lead",
     color: "var(--chart-2)",
+  },
+  revenueVnd: {
+    label: "Doanh thu đối soát",
+    color: "var(--chart-3)",
   },
 } satisfies ChartConfig;
 
-const axisMonthFormatter = new Intl.DateTimeFormat("en-US", { month: "short" });
-const tooltipMonthFormatter = new Intl.DateTimeFormat("en-US", { month: "short", year: "2-digit" });
-
-function getRollingMonthData(values: readonly number[]) {
-  return values.map((qualified, index) => {
-    const date = new Date();
-    date.setMonth(date.getMonth() - (values.length - 1 - index));
-
-    return {
-      date: date.toISOString(),
-      qualified,
-    };
+function formatVnd(value: number) {
+  return formatCurrency(value, {
+    currency: "VND",
+    locale: "vi-VN",
+    noDecimals: true,
   });
 }
 
-export function PipelineActivity() {
-  const pipelineChartData = getRollingMonthData(pipelineChartValues);
-  const totalQualified = pipelineChartData.reduce((sum, item) => sum + item.qualified, 0);
-  const discoveryCallsBooked = 184;
-  const discoveryProgress = Math.round((discoveryCallsBooked / totalQualified) * 100);
+function formatCompactVnd(value: number) {
+  return new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 1,
+    notation: "compact",
+  }).format(value);
+}
+
+function formatMonthLabel(value: string) {
+  const [year, month] = value.split("-").map(Number);
+  return new Intl.DateTimeFormat("vi-VN", { month: "2-digit", timeZone: "UTC", year: "numeric" }).format(
+    new Date(Date.UTC(year, month - 1, 1)),
+  );
+}
+
+export function PipelineActivity({ data, summary }: { data: CrmMonthlyFlow[]; summary: CrmSummary }) {
+  const totalLeadsInRange = data.reduce((sum, item) => sum + item.leads, 0);
+  const totalLeadOrdersInRange = data.reduce((sum, item) => sum + item.leadOrders, 0);
+  const rangeConversion = totalLeadsInRange > 0 ? Math.round((totalLeadOrdersInRange / totalLeadsInRange) * 100) : 0;
+  const hasData = data.some((item) => item.leads > 0 || item.leadOrders > 0 || item.revenueVnd > 0);
 
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
       <Card className="xl:col-span-12">
         <CardHeader>
-          <CardTitle>Qualified Lead Flow</CardTitle>
-          <CardAction>
-            <Select defaultValue="last-12-months">
-              <SelectTrigger size="sm" className="min-w-40">
-                <SelectValue placeholder="Select range" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="last-30-days">Last 30 days</SelectItem>
-                  <SelectItem value="last-quarter">Last quarter</SelectItem>
-                  <SelectItem value="last-12-months">Last 12 months</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </CardAction>
+          <CardTitle>Luồng lead và đơn hàng</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-            <ChartContainer config={pipelineChartConfig} className="h-72 w-full lg:col-span-8">
-              <BarChart data={pipelineChartData} margin={{ left: 0, right: 0, top: 0, bottom: 0 }} barSize={38}>
-                <defs>
-                  <pattern
-                    id="crm-qualified-pattern"
-                    width="4"
-                    height="4"
-                    patternUnits="userSpaceOnUse"
-                    patternTransform="rotate(45)"
-                  >
-                    <rect width="6" height="6" fill="var(--color-qualified)" fillOpacity="0.15" />
-                    <line
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="6"
-                      stroke="var(--color-qualified)"
-                      strokeWidth="1.25"
-                      strokeOpacity="0.40"
-                    />
-                  </pattern>
-                </defs>
-                <CartesianGrid vertical={false} strokeDasharray="0" />
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  tickMargin={10}
-                  axisLine={false}
-                  tickFormatter={(value) => axisMonthFormatter.format(new Date(String(value)))}
-                />
-                <YAxis hide />
-                <ChartTooltip
-                  content={
-                    <ChartTooltipContent
-                      hideIndicator
-                      labelFormatter={(value) => tooltipMonthFormatter.format(new Date(String(value)))}
-                    />
-                  }
-                />
-                <Bar
-                  dataKey="qualified"
-                  fill="url(#crm-qualified-pattern)"
-                  radius={[8, 8, 0, 0]}
-                  stroke="var(--color-qualified)"
-                  strokeOpacity={0.5}
-                  strokeWidth={0.5}
-                />
-              </BarChart>
-            </ChartContainer>
-
-            <div className="flex flex-col gap-5 rounded-lg p-4 lg:col-span-4">
-              <div className="flex flex-col gap-1">
-                <div className="font-medium text-4xl tabular-nums leading-none">
-                  {totalQualified} <span className="font-normal text-lg text-muted-foreground">leads</span>
-                </div>
-                <p className="text-muted-foreground text-sm">Total qualified leads captured over the last 12 months.</p>
-              </div>
-
-              <div className="flex flex-col gap-3 rounded-lg border border-border/60 p-3">
-                <div className="text-[11px] text-muted-foreground uppercase tracking-widest">
-                  Discovery Calls Booked
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <div className="font-medium text-2xl tabular-nums leading-none">
-                    {discoveryCallsBooked} <span className="font-normal text-muted-foreground text-sm">meetings</span>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {discoveryProgress}% of qualified leads booked a first call.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-2 pt-0.5">
-                  <Progress
-                    value={discoveryProgress}
-                    className="h-2.5 bg-chart-2/12 *:data-[slot='progress-indicator']:bg-chart-2"
+          {hasData ? (
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+              <ChartContainer config={chartConfig} className="h-72 w-full lg:col-span-8">
+                <BarChart data={data} margin={{ left: 0, right: 8, top: 0, bottom: 0 }} barSize={28}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => formatMonthLabel(String(value))}
                   />
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="font-medium tabular-nums">{discoveryCallsBooked} booked</div>
-                    <div className="text-muted-foreground tabular-nums">{totalQualified} qualified</div>
+                  <YAxis yAxisId="count" width={28} tickLine={false} axisLine={false} allowDecimals={false} />
+                  <YAxis
+                    yAxisId="revenue"
+                    orientation="right"
+                    width={48}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => formatCompactVnd(Number(value))}
+                  />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        className="w-60"
+                        indicator="line"
+                        labelFormatter={(value) => formatMonthLabel(String(value))}
+                      />
+                    }
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar yAxisId="count" dataKey="leads" fill="var(--color-leads)" radius={[6, 6, 0, 0]} />
+                  <Bar yAxisId="count" dataKey="leadOrders" fill="var(--color-leadOrders)" radius={[6, 6, 0, 0]} />
+                  <Line
+                    yAxisId="revenue"
+                    dataKey="revenueVnd"
+                    type="monotone"
+                    stroke="var(--color-revenueVnd)"
+                    strokeWidth={1.8}
+                    dot={false}
+                  />
+                </BarChart>
+              </ChartContainer>
+
+              <div className="flex flex-col gap-5 rounded-lg p-4 lg:col-span-4">
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium text-4xl tabular-nums leading-none">
+                    {summary.leadOrders.toLocaleString("vi-VN")}{" "}
+                    <span className="font-normal text-lg text-muted-foreground">đơn</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm">Tổng số đơn hàng xác định có nguồn từ lead CRM.</p>
+                </div>
+
+                <div className="flex flex-col gap-3 rounded-lg border border-border/60 p-3">
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest">
+                    Tỷ lệ chuyển đổi 6 tháng
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="font-medium text-2xl tabular-nums leading-none">
+                      {rangeConversion}% <span className="font-normal text-muted-foreground text-sm">lead ra đơn</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm">
+                      {totalLeadOrdersInRange.toLocaleString("vi-VN")} đơn từ{" "}
+                      {totalLeadsInRange.toLocaleString("vi-VN")} lead mới.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 pt-0.5">
+                    <Progress value={rangeConversion} className="h-2.5" />
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="font-medium tabular-nums">{formatVnd(summary.totalRevenueVnd)}</div>
+                      <div className="text-muted-foreground tabular-nums">doanh thu</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex h-72 items-center justify-center rounded-md border border-dashed text-center text-muted-foreground text-sm">
+              Chưa có dữ liệu lead hoặc đơn hàng trong kỳ báo cáo
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

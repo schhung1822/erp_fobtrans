@@ -123,108 +123,113 @@ export function getUsersColumns({
   onDeleteUser: (user: UserRow) => void;
 }): ColumnDef<UserRow>[] {
   return [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          aria-label="Chon tat ca nhan su"
-          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          aria-label={`Select ${row.original.name}`}
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-        />
-      </div>
-    ),
-    enableHiding: false,
-    enableSorting: false,
-  },
-  {
-    id: "search",
-    accessorFn: (row) => `${row.name} ${row.email}`,
-    filterFn: "includesString",
-    enableHiding: true,
-  },
-  {
-    accessorKey: "name",
-    header: "Nguoi dung",
-    cell: ({ row }) => (
-      <div className="flex items-center gap-3">
-        <AvatarCell name={row.original.name} lastActive={row.original.lastActive} />
-        <div className="min-w-0">
-          <Button
-            type="button"
-            variant="link"
-            className="h-auto min-w-0 justify-start p-0 text-left font-medium text-foreground text-sm"
-            onClick={() => onOpenUser(row.original)}
-          >
-            <span className="truncate">{row.original.name}</span>
-          </Button>
-          <div className="truncate text-muted-foreground text-sm">{row.original.email}</div>
+    {
+      id: "select",
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            aria-label="Chọn tất cả nhân sự"
+            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          />
         </div>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "role",
-    header: "Vai tro",
-    filterFn: "equalsString",
-    cell: ({ row }) => <RoleCell role={row.original.role} team={row.original.team} />,
-  },
-  {
-    accessorKey: "team",
-    header: "Nhom",
-    filterFn: "equalsString",
-    cell: ({ row }) => <div className="text-sm">{row.original.team}</div>,
-  },
-  {
-    accessorKey: "workspace",
-    header: "Workspace",
-    filterFn: "arrIncludes",
-    cell: ({ row }) => <WorkspaceCell workspaces={row.original.workspace} />,
-  },
-  {
-    accessorKey: "status",
-    header: "Trang thai",
-    filterFn: "equalsString",
-    cell: ({ row }) => <StatusBadge status={row.original.status} />,
-  },
-  {
-    id: "joinedDate",
-    accessorFn: (row) => parse(row.joinedDate, "dd MMM yyyy, h:mm a", new Date()).getTime(),
-    header: "Ngay tham gia",
-    cell: ({ row }) => <div className="text-foreground text-sm">{row.original.joinedDate}</div>,
-  },
-  {
-    id: "actions",
-    header: () => <div className="text-right">Hanh dong</div>,
-    cell: ({ row }) => (
-      <div className="text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            aria-label={`Chọn ${row.original.name}`}
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+          />
+        </div>
+      ),
+      enableHiding: false,
+      enableSorting: false,
+    },
+    {
+      id: "search",
+      accessorFn: (row) => `${row.name} ${row.email}`,
+      filterFn: "includesString",
+      enableHiding: true,
+    },
+    {
+      accessorKey: "name",
+      header: "Người dùng",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <AvatarCell name={row.original.name} lastActive={row.original.lastActive} />
+          <div className="min-w-0">
             <Button
-              aria-label={`Open actions for ${row.original.name}`}
-              className="size-8 rounded-md text-muted-foreground hover:bg-muted/50"
-              size="icon-sm"
-              variant="ghost"
+              type="button"
+              variant="link"
+              className="h-auto min-w-0 justify-start p-0 text-left font-medium text-foreground text-sm"
+              onClick={() => onOpenUser(row.original)}
             >
-              <MoreHorizontal className="size-4" />
+              <span className="truncate">{row.original.name}</span>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-36"><DropdownMenuItem onSelect={() => onOpenUser(row.original)}>Xem chi tiet</DropdownMenuItem>
-          <DropdownMenuSeparator /><DropdownMenuItem variant="destructive" onSelect={() => onDeleteUser(row.original)}>Xoa</DropdownMenuItem></DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-    enableHiding: false,
-    enableSorting: false,
-  },
+            <div className="truncate text-muted-foreground text-sm">{row.original.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "role",
+      header: "Vai trò",
+      filterFn: "equalsString",
+      cell: ({ row }) => <RoleCell role={row.original.role} team={row.original.team} />,
+    },
+    {
+      accessorKey: "team",
+      header: "Nhóm",
+      filterFn: "equalsString",
+      cell: ({ row }) => <div className="text-sm">{row.original.team}</div>,
+    },
+    {
+      accessorKey: "workspace",
+      header: "Không gian làm việc",
+      filterFn: "arrIncludes",
+      cell: ({ row }) => <WorkspaceCell workspaces={row.original.workspace} />,
+    },
+    {
+      accessorKey: "status",
+      header: "Trạng thái",
+      filterFn: "equalsString",
+      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+    },
+    {
+      id: "joinedDate",
+      accessorFn: (row) => parse(row.joinedDate, "dd/MM/yyyy, HH:mm", new Date()).getTime(),
+      header: "Ngày tham gia",
+      cell: ({ row }) => <div className="text-foreground text-sm">{row.original.joinedDate}</div>,
+    },
+    {
+      id: "actions",
+      header: () => <div className="text-right">Hành động</div>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label={`Mở thao tác cho ${row.original.name}`}
+                className="size-8 rounded-md text-muted-foreground hover:bg-muted/50"
+                size="icon-sm"
+                variant="ghost"
+              >
+                <MoreHorizontal className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem onSelect={() => onOpenUser(row.original)}>Xem chi tiết</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem variant="destructive" onSelect={() => onDeleteUser(row.original)}>
+                Xóa
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      enableHiding: false,
+      enableSorting: false,
+    },
   ];
 }

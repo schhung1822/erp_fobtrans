@@ -34,7 +34,7 @@ export async function createCustomer(formData: FormData) {
   await ensureCustomerExtraColumns();
 
   const name = text(formData, "name");
-  if (!name) throw new Error("Vui long nhap ten khach hang.");
+  if (!name) throw new Error("Vui lòng nhập tên khách hàng.");
 
   const pool = getDbPool();
   const customerId = await makeUuid();
@@ -66,8 +66,8 @@ export async function updateCustomer(formData: FormData) {
   const customerId = text(formData, "customerId");
   const name = text(formData, "name");
 
-  if (!customerId) throw new Error("Thieu customer_id de cap nhat.");
-  if (!name) throw new Error("Vui long nhap ten khach hang.");
+  if (!customerId) throw new Error("Thiếu id khách để cập nhật.");
+  if (!name) throw new Error("Vui lòng nhập tên khách hàng.");
 
   const pool = getDbPool();
   const [result] = await pool.query<ResultSetHeader>(
@@ -97,7 +97,7 @@ export async function updateCustomer(formData: FormData) {
   );
 
   if (result.affectedRows === 0) {
-    throw new Error("Khong tim thay khach hang de cap nhat.");
+    throw new Error("Không tìm thấy khách hàng để cập nhật.");
   }
 
   revalidateCustomers();

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as React from "react";
 
@@ -81,6 +81,69 @@ export function FormattedMoneyInput({
   );
 }
 
+export function OrderAmountInput({
+  amountName,
+  amountValue,
+  formId,
+  unitPriceName,
+  volumeM3,
+  weightKg,
+}: {
+  amountName: string;
+  amountValue: number;
+  formId: string;
+  unitPriceName: string;
+  volumeM3: number;
+  weightKg: number;
+}) {
+  const initialUnitPrice = weightKg > 0 && amountValue ? Math.round(amountValue / weightKg) : 0;
+  const [unitPriceDisplay, setUnitPriceDisplay] = React.useState(
+    initialUnitPrice ? formatThousands(initialUnitPrice.toString()) : "",
+  );
+  const [amountDisplay, setAmountDisplay] = React.useState(
+    amountValue ? formatThousands(Math.round(amountValue).toString()) : "",
+  );
+  const unitPrice = Number(onlyDigits(unitPriceDisplay)) || 0;
+  const priceBasis = unitPrice >= 100_000 ? "m³" : "kg";
+
+  return (
+    <div className="grid min-w-34 gap-1">
+      <div className="grid gap-1">
+        <span className="text-[10px] text-muted-foreground leading-none">Đơn giá / {priceBasis}</span>
+        <Input
+          className="h-8 w-34 text-right tabular-nums"
+          data-finance-cell="true"
+          inputMode="numeric"
+          onChange={(event) => {
+            const nextUnitPriceDisplay = formatThousands(event.target.value);
+            const nextUnitPrice = Number(onlyDigits(nextUnitPriceDisplay)) || 0;
+            const quantity = nextUnitPrice >= 100_000 ? volumeM3 : weightKg;
+
+            setUnitPriceDisplay(nextUnitPriceDisplay);
+            setAmountDisplay(
+              nextUnitPrice > 0 && quantity > 0 ? formatThousands(Math.round(nextUnitPrice * quantity).toString()) : "",
+            );
+          }}
+          placeholder="0"
+          value={unitPriceDisplay}
+        />
+        <input form={formId} name={unitPriceName} type="hidden" value={onlyDigits(unitPriceDisplay)} />
+      </div>
+      <div className="grid gap-1">
+        <span className="text-[10px] text-muted-foreground leading-none">Thành tiền đơn hàng</span>
+        <Input
+          className="h-8 w-34 text-right tabular-nums"
+          data-finance-cell="true"
+          inputMode="numeric"
+          onChange={(event) => setAmountDisplay(formatThousands(event.target.value))}
+          placeholder="0"
+          value={amountDisplay}
+        />
+        <input form={formId} name={amountName} type="hidden" value={onlyDigits(amountDisplay)} />
+      </div>
+    </div>
+  );
+}
 export function MonthSelect({
   basePath = "/dashboard/finance",
   months,
@@ -94,7 +157,7 @@ export function MonthSelect({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground text-sm">Thang bao cao</span>
+      <span className="text-muted-foreground text-sm">Tháng báo cáo</span>
       <Select onValueChange={(month) => router.push(`${basePath}?month=${month}`)} value={selectedMonth}>
         <SelectTrigger className="w-36" size="sm">
           <SelectValue />
@@ -166,9 +229,9 @@ export function StaffCommissionTable({ rows }: { rows: StaffCommissionRow[] }) {
   return (
     <Card>
       <CardHeader className="flex w-[100%] items-center justify-between gap-3">
-        <CardTitle className="font-normal">Thong ke theo nhan su phu trach</CardTitle>
+        <CardTitle className="font-normal">Thông kê theo nhân sự phụ trách</CardTitle>
         <div className="text-right text-muted-foreground text-xs">
-          Tong hoa hong: <span className="font-medium text-foreground tabular-nums">{formatVnd(totalCommission)}</span>
+          Tổng hoa hồng: <span className="font-medium text-foreground tabular-nums">{formatVnd(totalCommission)}</span>
         </div>
       </CardHeader>
       <CardContent>
@@ -177,19 +240,19 @@ export function StaffCommissionTable({ rows }: { rows: StaffCommissionRow[] }) {
             <TableHeader className="bg-muted/60">
               <TableRow>
                 <TableHead>Nhan su</TableHead>
-                <TableHead className="text-right">Don</TableHead>
+                <TableHead className="text-right">Đơn</TableHead>
                 <TableHead className="text-right">Doanh thu</TableHead>
-                <TableHead className="text-right">Cong no</TableHead>
-                <TableHead className="text-right">Loi nhuan</TableHead>
-                <TableHead className="text-right">% hoa hong</TableHead>
-                <TableHead className="text-right">Thuong hoa hong</TableHead>
+                <TableHead className="text-right">Công nợ</TableHead>
+                <TableHead className="text-right">Lợi nhuận</TableHead>
+                <TableHead className="text-right">% hoa hồng</TableHead>
+                <TableHead className="text-right">Thưởng hoa hồng</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.length === 0 ? (
                 <TableRow>
                   <TableCell className="h-24 text-center text-muted-foreground" colSpan={7}>
-                    Chua co du lieu trong thang nay.
+                    Chưa có dữ liệu trong tháng này
                   </TableCell>
                 </TableRow>
               ) : (

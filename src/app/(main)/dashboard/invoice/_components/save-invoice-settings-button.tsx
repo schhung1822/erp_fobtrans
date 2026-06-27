@@ -14,7 +14,7 @@ import type { InvoiceFormValues } from "./data";
 type SettingsScope = "payment" | "business";
 
 function setText(formData: FormData, key: string, value: string | string[] | null | undefined) {
-  formData.set(key, Array.isArray(value) ? value.join("\n") : value ?? "");
+  formData.set(key, Array.isArray(value) ? value.join("\n") : (value ?? ""));
 }
 
 function buildPaymentFormData(values: InvoiceFormValues) {
@@ -51,9 +51,9 @@ export function SaveInvoiceSettingsButton({ scope }: { scope: SettingsScope }) {
     startTransition(async () => {
       try {
         await action(formData);
-        toast.success(scope === "payment" ? "Da luu cau hinh thanh toan." : "Da luu cau hinh doanh nghiep.");
+        toast.success(scope === "payment" ? "Đã lưu cấu hình thanh toán." : "Đã lưu cấu hình doanh nghiệp.");
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Khong the luu cau hinh.");
+        toast.error(error instanceof Error ? error.message : "Không thể lưu cấu hình.");
       }
     });
   }
@@ -61,7 +61,7 @@ export function SaveInvoiceSettingsButton({ scope }: { scope: SettingsScope }) {
   return (
     <Button type="button" size="sm" onClick={handleSave} disabled={isPending} className="w-fit">
       <SaveIcon />
-      {isPending ? "Dang luu..." : "Luu cau hinh"}
+      {isPending ? "Đang lưu..." : "Lưu cấu hình"}
     </Button>
   );
 }

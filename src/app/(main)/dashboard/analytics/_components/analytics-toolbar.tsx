@@ -1,4 +1,4 @@
-import { Ellipsis, FileDown, FileUp, RefreshCw, Share2 } from "lucide-react";
+import { Ellipsis, FileDown, RefreshCw, Share2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,19 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export function AnalyticsToolbar() {
+export function AnalyticsToolbar({ rangeLabel }: { rangeLabel: string }) {
   return (
     <div className="flex items-center gap-2">
-      <Select defaultValue="last-4-weeks">
-        <SelectTrigger className="w-34">
+      <Select defaultValue="last-30-days">
+        <SelectTrigger className="w-42">
           <SelectValue placeholder="Select range" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="last-7-days">Last 7 days</SelectItem>
-            <SelectItem value="last-4-weeks">Last 4 weeks</SelectItem>
-            <SelectItem value="last-3-months">Last 3 months</SelectItem>
-            <SelectItem value="year-to-date">Year to date</SelectItem>
+            <SelectItem value="last-30-days">{rangeLabel}</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -35,27 +32,23 @@ export function AnalyticsToolbar() {
             <Ellipsis />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
+        <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Analytics actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Thao tác báo cáo</DropdownMenuLabel>
             <DropdownMenuItem>
               <FileDown />
-              Export report
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <FileUp />
-              Import data
+              Xuất báo cáo
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Share2 />
-              Share dashboard
+              Chia sẻ dashboard
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
               <RefreshCw />
-              Refresh metrics
+              Làm mới chỉ số
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

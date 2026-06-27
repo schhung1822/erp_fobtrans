@@ -1,13 +1,12 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
-import { mkdir, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
-
 import { revalidatePath } from "next/cache";
 
 import { defaultInvoiceValues } from "./data";
 import { getSavedInvoiceSettings, saveInvoiceSettings } from "./invoice-settings";
+import { randomUUID } from "node:crypto";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 const LOGO_UPLOAD_URL_PREFIX = "/uploads/invoice-logos/";
 const LOGO_UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "invoice-logos");
@@ -59,12 +58,12 @@ export async function uploadInvoiceLogo(formData: FormData) {
   const file = formData.get("logo");
 
   if (!(file instanceof File) || file.size === 0) {
-    throw new Error("Vui long chon file logo.");
+    throw new Error("Vui lòng chọn tệp logo.");
   }
 
   const extension = imageExtensions[file.type];
   if (!extension) {
-    throw new Error("Logo chi ho tro JPG, PNG, WEBP hoac SVG.");
+    throw new Error("Logo chỉ hỗ trợ định dạng JPG, PNG, WEBP hoặc SVG.");
   }
 
   await mkdir(LOGO_UPLOAD_DIR, { recursive: true });

@@ -1,27 +1,22 @@
-Ôªøimport {
+import {
   Banknote,
   BellRing,
   Calendar,
   ChartBar,
   Fingerprint,
-  Forklift,
-  Gauge,
-  GraduationCap,
   Kanban,
   Landmark,
   LayoutDashboard,
-  ListTodo,
   type LucideIcon,
   Phone,
   ReceiptText,
   Scale,
-  Server,
-  ShoppingBag,
   ShoppingBagIcon,
   SquareArrowUpRight,
   UserCogIcon,
   Users,
   Warehouse,
+  Gauge,
 } from "lucide-react";
 
 export type NavBadge = "new" | "soon";
@@ -81,7 +76,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         id: "finance",
-        title: "T\u00e0i ch\u00ednh",
+        title: "T‡i chÌnh",
         url: "/dashboard/finance",
         icon: Banknote,
       },
@@ -90,25 +85,6 @@ export const sidebarItems: NavGroup[] = [
         title: "Ph\u00e2n t\u00edch",
         url: "/dashboard/analytics",
         icon: Gauge,
-      },
-      {
-        id: "ecommerce",
-        title: "E-commerce",
-        url: "/dashboard/ecommerce",
-        icon: ShoppingBag,
-      },
-      {
-        id: "academy",
-        title: "Academy",
-        url: "/dashboard/academy",
-        icon: GraduationCap,
-      },
-      {
-        id: "infrastructure",
-        title: "Infrastructure",
-        url: "/dashboard/infrastructure",
-        icon: Server,
-        badge: "new",
       },
     ],
   },
@@ -178,7 +154,7 @@ export const sidebarItems: NavGroup[] = [
       },
       {
         id: "login",
-        title: "ƒêƒÉng nh·∫≠p",
+        title: "–ang nh?p",
         url: "/auth/v1/login",
         icon: Fingerprint,
       },

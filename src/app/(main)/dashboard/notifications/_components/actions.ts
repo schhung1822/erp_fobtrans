@@ -2,12 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 
+import { sendTestNotification as sendConfiguredTestNotification } from "./notification-sender";
 import {
   defaultNotificationSettings,
-  saveNotificationSettings as persistNotificationSettings,
   type NotificationSettings,
+  saveNotificationSettings as persistNotificationSettings,
 } from "./notification-settings";
-import { sendTestNotification as sendConfiguredTestNotification } from "./notification-sender";
 
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -43,11 +43,11 @@ export async function saveNotificationSettings(formData: FormData) {
   };
 
   if (settings.larkEnabled && !settings.larkWebhookUrl) {
-    throw new Error("Vui long nhap webhook Lark truoc khi bat kenh Lark.");
+    throw new Error("Vui lòng nhập webhook Lark trước khi bật kênh Lark.");
   }
 
   if (settings.telegramEnabled && (!settings.telegramBotToken || !settings.telegramChatId)) {
-    throw new Error("Vui long nhap token bot va group id Telegram truoc khi bat kenh Telegram.");
+    throw new Error("Vui lòng nhập bot token và ID nhóm Telegram trước khi bật kênh Telegram.");
   }
 
   await persistNotificationSettings(settings);

@@ -34,7 +34,7 @@ function revalidateOperations() {
 
 export async function createWarehouse(formData: FormData) {
   const name = text(formData, "name");
-  if (!name) throw new Error("Vui long nhap ten kho.");
+  if (!name) throw new Error("Vui lòng nhập tên kho.");
 
   const pool = getDbPool();
   const warehouseId = await makeUuid();
@@ -55,7 +55,7 @@ export async function updateWarehouse(formData: FormData) {
   const warehouseId = text(formData, "warehouseId");
   const name = text(formData, "name");
 
-  if (!warehouseId) throw new Error("Thieu warehouse_id de cap nhat.");
+  if (!warehouseId) throw new Error("Thiếu kho id để cập nhật.");
   if (!name) throw new Error("Vui long nhap ten kho.");
 
   const pool = getDbPool();
@@ -74,7 +74,7 @@ export async function updateWarehouse(formData: FormData) {
   );
 
   if (result.affectedRows === 0) {
-    throw new Error("Khong tim thay kho de cap nhat.");
+    throw new Error("Không tìm thấy kho để cập nhật.");
   }
 
   revalidateOperations();
@@ -88,7 +88,7 @@ export async function deleteWarehouse(formData: FormData) {
   const [result] = await pool.query<ResultSetHeader>("delete from warehouses where warehouse_id = ?", [warehouseId]);
 
   if (result.affectedRows === 0) {
-    throw new Error("Khong tim thay kho de xoa.");
+    throw new Error("Không tìm thấy kho để xóa.");
   }
 
   revalidateOperations();

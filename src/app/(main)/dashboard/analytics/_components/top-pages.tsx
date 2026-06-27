@@ -3,19 +3,27 @@ import { Ellipsis } from "lucide-react";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-const pages = [
-  { bounce: "24%", path: "/dashboard", time: "3m 12s", views: "64.2k" },
-  { bounce: "31%", path: "/pricing", time: "2m 08s", views: "41.8k" },
-  { bounce: "18%", path: "/docs/getting-started", time: "4m 44s", views: "28.6k" },
-  { bounce: "22%", path: "/blog/analytics-guide", time: "5m 06s", views: "19.3k" },
-  { bounce: "42%", path: "/contact", time: "1m 18s", views: "8.9k" },
-];
+import type { AnalyticsStaffRow } from "./data";
 
-export function TopPages() {
+function formatCompactVnd(value: number) {
+  return `${new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 1,
+    notation: "compact",
+  }).format(value)} d`;
+}
+
+function formatPercent(value: number) {
+  return new Intl.NumberFormat("vi-VN", {
+    maximumFractionDigits: 1,
+    style: "percent",
+  }).format(value);
+}
+
+export function TopPages({ rows }: { rows: AnalyticsStaffRow[] }) {
   return (
     <Card className="h-full gap-2">
       <CardHeader>
-        <CardTitle className="font-normal">Page Performance</CardTitle>
+        <CardTitle className="font-normal">Hiệu suất nhân sự phụ trách</CardTitle>
         <CardAction>
           <Ellipsis className="size-4" />
         </CardAction>
@@ -25,21 +33,40 @@ export function TopPages() {
         <Table className="[&_td:first-child]:pl-4 [&_td:last-child]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4">
           <TableHeader className="[&_tr]:border-border/50">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="h-8" />
-              <TableHead className="h-8 w-24 text-right font-normal">Views</TableHead>
-              <TableHead className="h-8 w-24 text-right font-normal">Avg Time</TableHead>
-              <TableHead className="h-8 w-20 text-right font-normal">Bounce</TableHead>
+              <TableHead className="h-8 font-normal">Nhân sự</TableHead>
+              <TableHead className="h-8 w-20 text-right font-normal">Lead</TableHead>
+              <TableHead className="h-8 w-20 text-right font-normal">Don</TableHead>
+              <TableHead className="h-8 w-24 text-right font-normal">Don lead</TableHead>
+              <TableHead className="h-8 w-20 text-right font-normal">CVR</TableHead>
+              <TableHead className="h-8 w-28 text-right font-normal">Doanh thu</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="[&_tr]:border-border/50">
-            {pages.map((page) => (
-              <TableRow className="hover:bg-transparent" key={page.path}>
-                <TableCell className="max-w-0 truncate py-4 font-medium">{page.path}</TableCell>
-                <TableCell className="text-right tabular-nums">{page.views}</TableCell>
-                <TableCell className="text-right text-muted-foreground tabular-nums">{page.time}</TableCell>
-                <TableCell className="text-right text-muted-foreground tabular-nums">{page.bounce}</TableCell>
+            {rows.length > 0 ? (
+              rows.map((row) => (
+                <TableRow className="hover:bg-transparent" key={row.staffId}>
+                  <TableCell className="max-w-0 truncate py-4 font-medium">
+                    {row.staffName}
+                    {row.staffCode ? <span className="ml-2 text-muted-foreground text-xs">{row.staffCode}</span> : null}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums">{row.leads}</TableCell>
+                  <TableCell className="text-right tabular-nums">{row.orders}</TableCell>
+                  <TableCell className="text-right tabular-nums">{row.leadOrders}</TableCell>
+                  <TableCell className="text-right text-muted-foreground tabular-nums">
+                    {formatPercent(row.conversionRate)}
+                  </TableCell>
+                  <TableCell className="text-right text-muted-foreground tabular-nums">
+                    {formatCompactVnd(row.revenueVnd)}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={6} className="h-36 text-center text-muted-foreground">
+                  Chưa có dữ liệu nhân sự trong kỳ này
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </CardContent>

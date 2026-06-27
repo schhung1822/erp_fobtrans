@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-import { BellRingIcon, SendIcon, SaveIcon } from "lucide-react";
+import { BellRingIcon, SaveIcon, SendIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,60 +15,61 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { saveNotificationSettings, sendTestNotification } from "./actions";
 import type { NotificationSettings } from "./notification-settings";
+
 const templateVariables = [
   {
     token: "order_code",
-    scope: "Don hang",
-    label: "Ma don hang",
-    description: "Ma he thong tao cho don moi, vi du FOB-A1B2C.",
+    scope: "Đơn hàng",
+    label: "Mã đơn hàng",
+    description: "Mã hệ thống tạo cho đơn mới, ví dụ FOB-A1B2C.",
   },
   {
     token: "customer_name",
-    scope: "Don hang / Lien he",
-    label: "Ten khach hang",
-    description: "Ten nguoi gui cua don hang hoac ten khach hang gan voi lien he.",
+    scope: "Đơn hàng / Liên hệ",
+    label: "Tên khách hàng",
+    description: "Tên người gửi của đơn hàng hoặc tên khách hàng gắn với liên hệ.",
   },
   {
     token: "phone",
-    scope: "Don hang / Lien he",
-    label: "So dien thoai",
-    description: "So dien thoai nguoi gui trong don hang hoac so dien thoai cua lien he.",
+    scope: "Đơn hàng / Liên hệ",
+    label: "Số điện thoại",
+    description: "Số điện thoại người gửi trong đơn hàng hoặc số điện thoại của liên hệ.",
   },
   {
     token: "receiver_name",
-    scope: "Don hang",
-    label: "Nguoi nhan",
-    description: "Ten nguoi nhan hang trong don moi.",
+    scope: "Đơn hàng",
+    label: "Người nhận",
+    description: "Tên người nhận hàng trong đơn mới.",
   },
   {
     token: "total_charge_vnd",
-    scope: "Don hang",
-    label: "Tong tien",
-    description: "Gia tri thanh tien cua don hang, tu dong dinh dang theo tien VND.",
+    scope: "Đơn hàng",
+    label: "Tổng tiền",
+    description: "Giá trị thành tiền của đơn hàng, tự động định dạng theo tiền VND.",
   },
   {
     token: "contact_name",
-    scope: "Lien he",
-    label: "Ten lien he",
-    description: "Ten nguoi lien he moi vua duoc tao.",
+    scope: "Liên hệ",
+    label: "Tên liên hệ",
+    description: "Tên người liên hệ mới vừa được tạo.",
   },
   {
     token: "title",
-    scope: "Lien he",
-    label: "Chuc danh",
-    description: "Vai tro cua lien he nhu ke toan, mua hang, van hanh.",
+    scope: "Liên hệ",
+    label: "Chức danh",
+    description: "Vai trò của liên hệ như kế toán, mua hàng, vận hành.",
   },
   {
     token: "email",
-    scope: "Lien he",
+    scope: "Liên hệ",
     label: "Email",
-    description: "Dia chi email cua lien he moi neu co nhap.",
+    description: "Địa chỉ email của liên hệ mới nếu có nhập.",
   },
   {
     token: "note",
-    scope: "Don hang / Lien he",
-    label: "Ghi chu",
-    description: "Ghi chu noi bo tu form tao don hang hoac tao lien he.",
+    scope: "Đơn hàng / Liên hệ",
+    label: "Ghi chú",
+    description: "Ghi chú nội bộ từ biểu mẫu tạo đơn hàng hoặc tạo liên hệ.",
   },
 ];
 
@@ -110,9 +111,9 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
     startSaving(async () => {
       try {
         await saveNotificationSettings(formData);
-        toast.success("Da luu cau hinh thong bao.");
+        toast.success("Đã lưu cấu hình thông báo.");
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Khong the luu cau hinh thong bao.");
+        toast.error(error instanceof Error ? error.message : "Không thể lưu cấu hình thông báo.");
       }
     });
   }
@@ -121,9 +122,9 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
     startTesting(async () => {
       try {
         await sendTestNotification();
-        toast.success("Da gui thong bao kiem tra.");
+        toast.success("Đã gửi thông báo kiểm tra.");
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Khong the gui thong bao kiem tra.");
+        toast.error(error instanceof Error ? error.message : "Không thể gửi thông báo kiểm tra.");
       }
     });
   }
@@ -140,21 +141,21 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
           <CardHeader className="flex-row items-center justify-between space-y-0">
             <CardTitle className="flex items-center gap-2 text-base">
               <BellRingIcon className="size-4" />
-              Kenh nhan thong bao
+              Kênh nhận thông báo
             </CardTitle>
           </CardHeader>
           <CardContent className="grid gap-5">
             <div className="grid gap-3 md:grid-cols-2">
               <SettingSwitch
                 checked={larkEnabled}
-                label="Bat Lark Messenger"
-                note="Gui den group Lark qua webhook endpoint."
+                label="Bật Lark Messenger"
+                note="Gửi thẻ thông báo có tiêu đề và nội dung định dạng qua webhook Lark."
                 onCheckedChange={setLarkEnabled}
               />
               <SettingSwitch
                 checked={telegramEnabled}
-                label="Bat Telegram"
-                note="Gui den group Telegram qua bot token."
+                label="Bật Telegram"
+                note="Gửi đến nhóm Telegram qua bot token."
                 onCheckedChange={setTelegramEnabled}
               />
             </div>
@@ -162,8 +163,15 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <div className="flex justify-between">
-                  <Label htmlFor="larkWebhookUrl">Webhook endpoint Lark </Label>
-                  <a href="#" className="hover:text-primary">Xem tai lieu</a>
+                  <Label htmlFor="larkWebhookUrl">Địa chỉ webhook Lark</Label>
+                  <a
+                    href="https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/bot-v3/use-custom-bots-in-a-group"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-primary"
+                  >
+                    Xem tài liệu
+                  </a>
                 </div>
                 <Input
                   id="larkWebhookUrl"
@@ -176,8 +184,15 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="grid gap-2">
                   <div className="flex justify-between">
-                    <Label htmlFor="telegramBotToken">Telegram bot token</Label>
-                    <a href="#" className="hover:text-primary">Xem tai lieu</a>
+                    <Label htmlFor="telegramBotToken">Mã bot Telegram</Label>
+                    <a
+                      href="https://core.telegram.org/bots/tutorial#obtain-your-bot-token"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-primary"
+                    >
+                      Xem tài liệu
+                    </a>
                   </div>
                   <Input
                     id="telegramBotToken"
@@ -188,9 +203,16 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
                 </div>
                 <div className="grid gap-2">
                   <div className="flex justify-between">
-                    <Label htmlFor="telegramChatId">Telegram group id</Label>
-                    <a href="#" className="hover:text-primary">Xem tai lieu</a>
-                </div>
+                    <Label htmlFor="telegramChatId">ID nhóm Telegram</Label>
+                    <a
+                      href="https://core.telegram.org/bots/api#chat"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="hover:text-primary"
+                    >
+                      Xem tài liệu
+                    </a>
+                  </div>
                   <Input
                     id="telegramChatId"
                     name="telegramChatId"
@@ -203,17 +225,16 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
           </CardContent>
         </Card>
 
-        
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Mau noi dung don hang moi</CardTitle>
+              <CardTitle className="text-base">Mẫu nội dung đơn hàng mới</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-5">
               <div className="grid gap-2">
                 <p className="text-muted-foreground text-xs">
-                  Dung cac bien trong dau ngoac nhon, vi du {"{order_code}"} hoac {"{total_charge_vnd}"}. Bien khong co
-                  du lieu se hien thi dau "-".
+                  Dùng các biến trong dấu ngoặc nhọn, ví dụ {"{order_code}"} hoặc {"{total_charge_vnd}"}. Biến không có
+                  dữ liệu sẽ hiển thị dấu "-".
                 </p>
                 <Textarea
                   id="orderTemplate"
@@ -226,13 +247,13 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Mau noi dung lien he moi</CardTitle>
+              <CardTitle className="text-base">Mẫu nội dung liên hệ mới</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-5">
               <div className="grid gap-2">
                 <p className="text-muted-foreground text-xs">
-                  Co the xuong dong tuy y. Noi dung sau khi luu se duoc gui y nguyen sang Lark va Telegram khi bat su
-                  kien lien he moi.
+                  Có thể xuống dòng tùy ý. Nội dung sau khi lưu sẽ được gửi nguyên bản sang Lark và Telegram khi bật sự
+                  kiện liên hệ mới.
                 </p>
                 <Textarea
                   id="contactTemplate"
@@ -249,19 +270,19 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
       <div className="grid h-fit gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Su kien thong bao</CardTitle>
+            <CardTitle className="text-base">Sự kiện thông báo</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             <SettingSwitch
               checked={orderEnabled}
-              label="Don hang moi"
-              note="Gui thong bao khi don hang moi dc tao."
+              label="Đơn hàng mới"
+              note="Gửi thông báo khi đơn hàng mới được tạo."
               onCheckedChange={setOrderEnabled}
             />
             <SettingSwitch
               checked={contactEnabled}
-              label="Lien he moi"
-              note="Gui thong bao khi co lien he moi tu website."
+              label="Liên hệ mới"
+              note="Gửi thông báo khi có liên hệ mới từ website."
               onCheckedChange={setContactEnabled}
             />
           </CardContent>
@@ -269,7 +290,7 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Bien co the dung</CardTitle>
+            <CardTitle className="text-base">Biến có thể dùng</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3">
             {templateVariables.map((item) => (
@@ -287,11 +308,11 @@ export function NotificationsForm({ settings }: { settings: NotificationSettings
         <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
           <Button type="submit" disabled={isSaving}>
             <SaveIcon />
-            {isSaving ? "Dang luu..." : "Luu cau hinh"}
+            {isSaving ? "Đang lưu..." : "Lưu cấu hình"}
           </Button>
           <Button type="button" variant="outline" onClick={handleTest} disabled={isTesting}>
             <SendIcon />
-            {isTesting ? "Dang gui..." : "Gui thu"}
+            {isTesting ? "Đang gửi..." : "Gửi thử"}
           </Button>
         </div>
       </div>

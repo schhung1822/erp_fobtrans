@@ -13,7 +13,7 @@ export function ClientSelector() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-medium tracking-tight">Thong tin khach hang</h2>
+      <h2 className="font-medium tracking-tight">Thông tin khách hàng</h2>
 
       <div className="flex items-center gap-2 rounded-lg border bg-muted/20 p-3">
         <Avatar className="after:rounded-md">
@@ -23,20 +23,20 @@ export function ClientSelector() {
         </Avatar>
         <div className="min-w-0 text-sm">
           <div className="truncate font-medium">{selectedClient.name}</div>
-          <div className="truncate text-muted-foreground">{selectedClient.email || "Chua co email"}</div>
+          <div className="truncate text-muted-foreground">{selectedClient.email || "Chưa có email"}</div>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="client-name">
-            Ten khach hang
+            Tên khách hàng
           </FieldLabel>
           <Input id="client-name" {...register("to.name")} />
         </Field>
         <Field className="gap-1">
           <FieldLabel className="text-xs" htmlFor="client-tax-id">
-            Ma so thue
+            Mã số thuế
           </FieldLabel>
           <Input id="client-tax-id" {...register("to.taxId")} />
         </Field>

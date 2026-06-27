@@ -29,15 +29,15 @@ export function InvoicePreview({ invoice }: { invoice: InvoiceFormValues }) {
       <PrintInvoice invoice={invoice} />
       <div className="flex flex-col rounded-xl border bg-card">
         <div className="flex items-center justify-between px-4 py-4">
-          <h2 className="font-medium text-lg">Preview</h2>
+          <h2 className="font-medium text-lg">Xem trước</h2>
           <ButtonGroup>
             <Button type="button" variant="outline" onClick={handlePrint}>
               <Printer data-icon="inline-start" />
-              Print
+              In hóa đơn
             </Button>
             <Button type="button" variant="outline">
               <Download data-icon="inline-start" />
-              Download PDF
+              Tải PDF
             </Button>
           </ButtonGroup>
         </div>
@@ -48,7 +48,7 @@ export function InvoicePreview({ invoice }: { invoice: InvoiceFormValues }) {
         >
           {paperLayout === null ? (
             <div className="absolute inset-0 grid place-items-center text-muted-foreground text-sm">
-              Loading Preview
+              Đang tải bản xem trước
             </div>
           ) : null}
           <div

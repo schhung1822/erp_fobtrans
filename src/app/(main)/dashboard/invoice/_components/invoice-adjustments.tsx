@@ -12,7 +12,7 @@ export function InvoiceAdjustments() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="font-medium tracking-tight">Dieu chinh</h2>
+      <h2 className="font-medium tracking-tight">Điều chỉnh</h2>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_1.1fr]">
         <Controller
@@ -20,10 +20,10 @@ export function InvoiceAdjustments() {
           name="taxId"
           render={({ field }) => (
             <Field className="gap-1">
-              <FieldLabel className="text-xs">Thue</FieldLabel>
+              <FieldLabel className="text-xs">Thuế</FieldLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="h-10 w-full">
-                  <SelectValue placeholder="Chon thue" />
+                  <SelectValue placeholder="Chọn thuế" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
@@ -45,15 +45,15 @@ export function InvoiceAdjustments() {
             name="discountType"
             render={({ field }) => (
               <Field className="gap-1">
-                <FieldLabel className="text-xs">Chiet khau</FieldLabel>
+                <FieldLabel className="text-xs">Chiết khấu</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger className="h-10 w-full">
-                    <SelectValue placeholder="Loai chiet khau" />
+                    <SelectValue placeholder="Loại chiết khấu" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="fixed">So tien co dinh</SelectItem>
-                      <SelectItem value="percent">Phan tram</SelectItem>
+                      <SelectItem value="fixed">Số tiền cố định</SelectItem>
+                      <SelectItem value="percent">Phần trăm</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -61,12 +61,12 @@ export function InvoiceAdjustments() {
             )}
           />
           <Field className="gap-1">
-            <FieldLabel className="text-xs opacity-0">Gia tri</FieldLabel>
+            <FieldLabel className="text-xs opacity-0">Giá trị</FieldLabel>
             <InputGroup>
               <InputGroupInput
                 type="number"
                 step="1"
-                aria-label="Gia tri chiet khau"
+                aria-label="Giá trị chiết khấu"
                 {...register("discountValue", { valueAsNumber: true })}
               />
               <InputGroupAddon align="inline-end">{discountType === "fixed" ? "VND" : "%"}</InputGroupAddon>
